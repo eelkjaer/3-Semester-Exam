@@ -3,7 +3,7 @@
 ### 🏠 [Demo](https://eenielsen.dk)
 
 ### [Backend README](../backend/)
-### [Main README](../)
+### [Main README](https://github.com/eelkjaer/3-Semester-Exam/)
 
 ## Available Scripts
 

@@ -1,9 +1,11 @@
 <h1 align="center">3. Semester Exam - Backend</h1>
-[![Build Status](https://travis-ci.com/eelkjaer/3-Semester-Exam.svg?token=9yP3z9qzYHPxRf7MSmsT&branch=main)](https://travis-ci.com/eelkjaer/3-Semester-Exam)
+<a href="https://travis-ci.com/github/eelkjaer/3-Semester-Exam" target="_blank">
+    <img alt="Build status" src="https://travis-ci.com/eelkjaer/3-Semester-Exam.svg?token=9yP3z9qzYHPxRf7MSmsT&branch=main" />
+  </a>
 
 ### 🏠 [Webpage](https://api.eenielsen.dk/3sem-exam)
 
-### [Main README](../)
+### [Main README](https://github.com/eelkjaer/3-Semester-Exam/)
 ### [Frontend README](../frontend/)
 
 ## Author

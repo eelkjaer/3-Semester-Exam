@@ -1,5 +1,7 @@
 <h1 align="center">Welcome to Exam assignment for 3. Semester - Spring 2021 👋</h1>
-[![Build Status](https://travis-ci.com/eelkjaer/3-Semester-Exam.svg?token=9yP3z9qzYHPxRf7MSmsT&branch=main)](https://travis-ci.com/eelkjaer/3-Semester-Exam)
+<a href="https://travis-ci.com/github/eelkjaer/3-Semester-Exam" target="_blank">
+    <img alt="Build status" src="https://travis-ci.com/eelkjaer/3-Semester-Exam.svg?token=9yP3z9qzYHPxRf7MSmsT&branch=main" />
+  </a>
 
 ### 📝 [Assignment](https://nolink.dk)
 
