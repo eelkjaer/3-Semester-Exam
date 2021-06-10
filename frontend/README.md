@@ -34,8 +34,8 @@ Builds and deploys the project to the droplet.
 
 ## Author
 
-👤 **Emil Elkjær Nielsen**
-* E-mail: [mailto:cph-en93@cphbusiness.dk](cph-en93@cphbusiness.dk)
+👨🏼‍💻 **Emil Elkjær Nielsen**
+* E-mail: [cph-en93@cphbusiness.dk](mailto:cph-en93@cphbusiness.dk)
 * Website: https://eenielsen.dk/
 * Github: [@eelkjaer](https://github.com/eelkjaer)
 * LinkedIn: [@emil-elkjær](https://linkedin.com/in/emil-elkjær)
