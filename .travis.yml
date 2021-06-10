@@ -10,7 +10,7 @@ script:
   - cd backend && mvn test
 
 after_success:
-  - cd backend && mvn -Dremote.user=$REMOTE_USER -Dremote.password=$REMOTE_PW tomcat7:deploy -DskipTests
+  - mvn -Dremote.user=$REMOTE_USER -Dremote.password=$REMOTE_PW tomcat7:deploy -DskipTests
 
 services:
   - mysql
