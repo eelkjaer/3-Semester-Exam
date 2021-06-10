@@ -14,6 +14,7 @@ script:
 
 after_success:
 - mvn -Dremote.user=$REMOTE_USER -Dremote.password=$REMOTE_PW tomcat7:deploy -DskipTests
+- cd ../frontend && npm install && npm run deploy
 
 services:
 - mysql
