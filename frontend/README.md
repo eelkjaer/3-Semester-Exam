@@ -2,8 +2,8 @@
 
 ### 🏠 [Demo](https://eenielsen.dk)
 
-## [Backend README](../backend/README.md)
-## [Main README](../README.md)
+### [Backend README](../backend/)
+### [Main README](../)
 
 ## Available Scripts
 

@@ -1,7 +1,5 @@
 <h1 align="center">Welcome to Exam assignment for 3. Semester - Spring 2021 👋</h1>
-<p>
 [![Build Status](https://travis-ci.com/eelkjaer/3-Semester-Exam.svg?token=9yP3z9qzYHPxRf7MSmsT&branch=main)](https://travis-ci.com/eelkjaer/3-Semester-Exam)
-</p>
 
 ### 📝 [Assignment](https://nolink.dk)
 
@@ -9,8 +7,8 @@
 
 ### ✨ [Backend](https://api.eenielsen.dk/3sem-exam)
 
-## [Backend README](backend/README.md)
-## [Frontend README](frontend/README.md)
+### [Backend README](backend/)
+### [Frontend README](frontend/)
 
 ## Author
 
