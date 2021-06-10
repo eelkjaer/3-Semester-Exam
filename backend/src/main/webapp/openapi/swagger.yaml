@@ -1,0 +1,336 @@
+openapi: 3.0.1
+info:
+  title: The Queue Backend
+  description: API Documentation used for the backend of our 3. Semester project
+  contact:
+    name: Emil Elkjær Nielsen
+    email: cph-en93@cphbusiness.dk
+  license:
+    name: MIT
+    url: https://github.com/codergram/TheQueue_Backend/blob/main/LICENSE
+  version: 1.0.0
+servers:
+- url: http://localhost:8080/TheQueue_Backend
+  description: Localhost
+  variables: {}
+- url: https://api.codergram.me/TheQueue_Backend
+  description: Production
+  variables: {}
+tags:
+- name: question
+  description: Questions
+- name: school
+  description: Schools
+- name: auth
+  description: Authentication
+- name: system
+  description: API service
+paths:
+  /api/answer:
+    post:
+      tags:
+      - question
+      summary: Create new answer
+      operationId: createAnswer
+      requestBody:
+        description: Answer to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Answer'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Answer'
+        "200":
+          description: Answer was created
+        "400":
+          description: Answer was not created
+        "500":
+          description: Internal error
+  /api/auth:
+    post:
+      tags:
+      - auth
+      summary: Login
+      operationId: login
+      requestBody:
+        description: User to login
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "200":
+          description: User was logged in
+        "401":
+          description: Wrong credentials
+        "500":
+          description: Internal error
+  /api/courses/count:
+    get:
+      tags:
+      - school
+      summary: Get the number of courses in db
+      operationId: countCourses
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: string
+        "200":
+          description: Number of courses
+        "404":
+          description: No courses found
+  /api/question:
+    post:
+      tags:
+      - question
+      summary: Create new question
+      operationId: createQuestion
+      requestBody:
+        description: Question to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Question'
+        required: true
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        "200":
+          description: Question was created
+        "400":
+          description: Question was not created
+        "500":
+          description: Internal error
+  /api/questions/semester/{id}:
+    get:
+      tags:
+      - question
+      summary: Get all question for a queue
+      operationId: allQuestionsBySemesterId
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Question'
+        "200":
+          description: List of questions
+        "404":
+          description: No questions found
+  /api/schools/all:
+    get:
+      tags:
+      - school
+      summary: Get all schools in the database
+      operationId: allSchools
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/School'
+        "200":
+          description: List of schools
+        "404":
+          description: No schools found
+  /api/schools/count:
+    get:
+      tags:
+      - school
+      summary: Get the number of schools
+      operationId: countSchools
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                type: string
+        "200":
+          description: Number of schools in db
+        "404":
+          description: No schools found
+components:
+  schemas:
+    Answer:
+      type: object
+      properties:
+        answer:
+          type: string
+        id:
+          type: integer
+          format: int64
+        question:
+          $ref: '#/components/schemas/Question'
+        teacher:
+          $ref: '#/components/schemas/Teacher'
+        url:
+          type: string
+    Course:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        school:
+          $ref: '#/components/schemas/School'
+        semesters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Semester'
+    Question:
+      required:
+      - description
+      - password
+      - semesterId
+      - student
+      - topic
+      type: object
+      properties:
+        description:
+          type: string
+          example: I am getting error 500 when trying to fetch
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 3
+          default: -1
+        password:
+          type: string
+          example: supersecretpassword123
+        semesterId:
+          type: integer
+          format: int64
+          example: 1
+        student:
+          $ref: '#/components/schemas/Student'
+        studentLink:
+          type: string
+          nullable: true
+          example: https://pastebin.com/asdf
+        timestamp:
+          type: string
+          readOnly: true
+        topic:
+          type: string
+          example: Error on fetching
+    Role:
+      required:
+      - roleName
+      type: object
+      properties:
+        roleName:
+          type: string
+        userList:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+    School:
+      type: object
+      properties:
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
+        domain:
+          type: string
+        id:
+          type: integer
+          format: int64
+        logoUrl:
+          type: string
+        name:
+          type: string
+    Semester:
+      type: object
+      properties:
+        course:
+          $ref: '#/components/schemas/Course'
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    Student:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+          example: john@school.com
+        id:
+          type: integer
+          format: int64
+          example: 3
+        name:
+          type: string
+          readOnly: true
+          example: John
+    Teacher:
+      type: object
+      properties:
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/Answer'
+        email:
+          type: string
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        password:
+          type: string
+        zoom_url:
+          type: string
+    User:
+      required:
+      - userName
+      - userPass
+      type: object
+      properties:
+        roleList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        rolesAsStrings:
+          type: array
+          items:
+            type: string
+        userName:
+          type: string
+        userPass:
+          maxLength: 255
+          minLength: 1
+          type: string

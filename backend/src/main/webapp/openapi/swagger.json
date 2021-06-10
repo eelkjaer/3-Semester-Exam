@@ -1,0 +1,1482 @@
+openapi: 3.0.3
+info:
+  title: The Queue
+  version: 1.0.0
+  description: "API Documentation used for the backend of our 3. Semester project"
+  contact: {
+    name: Emil Elkjær Nielsen,
+    email: cph-en93@cphbusiness.dk
+  }
+  license: {
+    name: MIT,
+    url: "https://github.com/codergram/TheQueue_Backend/blob/main/LICENSE"
+  }
+servers:
+  - url: "https://api.codergram.me"
+    description: Production
+  - url: "http://127.0.0.1:8080"
+    description: Localhost
+paths:
+  /TheQueue_Backend/api/:
+    get:
+      summary: API heartbeat
+      description: API heartbeat
+      operationId: apiHeartbeat
+      responses:
+        "200":
+          description: API heartbeat
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "19"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:59:07 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: "I'm alive"
+              examples:
+                API heartbeat:
+                  value:
+                    msg: "I'm alive"
+  /TheQueue_Backend/api/auth/:
+    post:
+      summary: Get JWT token
+      description: Get JWT token
+      operationId: getJwtToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: underviser@cphbusiness.dk
+                password:
+                  type: string
+                  example: kodeord123
+            example:
+              email: underviser@cphbusiness.dk
+              password: kodeord123
+      responses:
+        "200":
+          description: Get JWT token
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "314"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:50:40 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1bmRlcnZpc2VyQGNwaGJ1c2luZXNzLmRrIiwicm9sZXMiOiJhZG1pbiIsImV4cCI6MTYyMDc1NzIzOSwiaWF0IjoxNjIwNzU1NDM5LCJpc3N1ZXIiOiJjb2RlcmdyYW0ubWUiLCJ1c2VybmFtZSI6InVuZGVydmlzZXJAY3BoYnVzaW5lc3MuZGsifQ.7Q0haE6ljHgPCFDT15Y08xguO-lqFEp4kMZY4KYAh88
+                  username:
+                    type: string
+                    example: underviser@cphbusiness.dk
+              examples:
+                Get JWT token:
+                  value:
+                    token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1bmRlcnZpc2VyQGNwaGJ1c2luZXNzLmRrIiwicm9sZXMiOiJhZG1pbiIsImV4cCI6MTYyMDc1NzIzOSwiaWF0IjoxNjIwNzU1NDM5LCJpc3N1ZXIiOiJjb2RlcmdyYW0ubWUiLCJ1c2VybmFtZSI6InVuZGVydmlzZXJAY3BoYnVzaW5lc3MuZGsifQ.7Q0haE6ljHgPCFDT15Y08xguO-lqFEp4kMZY4KYAh88
+                    username: underviser@cphbusiness.dk
+  /TheQueue_Backend/api/courses/count:
+    get:
+      summary: Count courses in db
+      description: Count courses in db
+      operationId: countCoursesInDb
+      responses:
+        "200":
+          description: Count courses in db
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "12"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:59:35 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    example: 12
+              examples:
+                Count courses in db:
+                  value:
+                    count: 12
+  /TheQueue_Backend/api/question:
+    put:
+      summary: Add answer to question
+      description: Add answer to question
+      operationId: addAnswerToQuestion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                answer:
+                  type: object
+                  properties:
+                    answer:
+                      type: string
+                      example: Et eller andet svar
+                    teacher:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          example: underviser@cphbusiness.dk
+                    teacherLink:
+                      type: string
+                      example: "https://badlink.nu"
+                id:
+                  type: number
+                  example: 6
+            example:
+              answer:
+                answer: Et eller andet svar
+                teacher:
+                  email: underviser@cphbusiness.dk
+                teacherLink: "https://badlink.nu"
+              id: 6
+      responses:
+        "200":
+          description: Add answer to question
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "337"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 18:07:36 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: object
+                    properties:
+                      answer:
+                        type: string
+                        example: Et eller andet svar
+                      id:
+                        type: number
+                        example: 6
+                      teacher:
+                        type: object
+                        properties:
+                          email:
+                            type: string
+                            example: underviser@cphbusiness.dk
+                          id:
+                            type: number
+                            example: 1
+                          password:
+                            type: string
+                            example: kodeord123
+                          teacherName:
+                            type: string
+                            example: Emil tutor
+                          zoom_url:
+                            type: string
+                            example: "https://mitnyezoomlink.dk"
+                      teacherLink:
+                        type: string
+                        example: "https://badlink.nu"
+                  id:
+                    type: number
+                    example: 6
+                  semesterId:
+                    type: number
+                    example: 0
+              examples:
+                Add answer to question:
+                  value:
+                    answer:
+                      answer: Et eller andet svar
+                      id: 6
+                      teacher:
+                        email: underviser@cphbusiness.dk
+                        id: 1
+                        password: kodeord123
+                        teacherName: Emil tutor
+                        zoom_url: "https://mitnyezoomlink.dk"
+                      teacherLink: "https://badlink.nu"
+                    id: 6
+                    semesterId: 0
+    post:
+      summary: Add new question
+      description: Add new question
+      operationId: addNewQuestion
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: Giver ingen mening
+                password:
+                  type: string
+                  example: "12345"
+                semesterId:
+                  type: number
+                  example: 1
+                student:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: cph-en93@cphbusiness.dk
+                studentLink:
+                  type: string
+                  example: "http://facebook.ru"
+                topic:
+                  type: string
+                  example: Fejl i postman
+            example:
+              description: Giver ingen mening
+              password: "12345"
+              semesterId: 1
+              student:
+                email: cph-en93@cphbusiness.dk
+              studentLink: "http://facebook.ru"
+              topic: Fejl i postman
+      responses:
+        "200":
+          description: Add new question
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "300"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 18:00:14 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  description:
+                    type: string
+                    example: Giver ingen mening
+                  id:
+                    type: number
+                    example: 10
+                  password:
+                    type: string
+                    example: "12345"
+                  semesterId:
+                    type: number
+                    example: 1
+                  student:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                        example: cph-en93@cphbusiness.dk
+                      id:
+                        type: number
+                        example: 1
+                      name:
+                        type: string
+                        example: Emil
+                  studentLink:
+                    type: string
+                    example: "http://facebook.ru"
+                  timestamp:
+                    type: string
+                    example: "2021-05-11 20:00:14.431462"
+                  topic:
+                    type: string
+                    example: Fejl i postman
+              examples:
+                Add new question:
+                  value:
+                    description: Giver ingen mening
+                    id: 10
+                    password: "12345"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.ru"
+                    timestamp: "2021-05-11 20:00:14.431462"
+                    topic: Fejl i postman
+  /TheQueue_Backend/api/questions:
+    get:
+      summary: Get all questions
+      description: Get all questions
+      operationId: getAllQuestions
+      responses:
+        "200":
+          description: Get all questions
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "3977"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:59:59 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    answer:
+                      type: object
+                      properties:
+                        answer:
+                          type: string
+                          example: Rigtigt godt svar
+                        id:
+                          type: number
+                          example: 1
+                        teacher:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              example: underviser@cphbusiness.dk
+                            id:
+                              type: number
+                              example: 1
+                            password:
+                              type: string
+                              example: kodeord123
+                            teacherName:
+                              type: string
+                              example: Emil tutor
+                            zoom_url:
+                              type: string
+                              example: "https://mitnyezoomlink.dk"
+                        teacherLink:
+                          type: string
+                          example: "https://codergram.me"
+                    description:
+                      type: string
+                      example: JPA kan til tider være træls
+                    id:
+                      type: number
+                      example: 1
+                    password:
+                      type: string
+                      example: "567898"
+                    semesterId:
+                      type: number
+                      example: 1
+                    student:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          example: cph-en93@cphbusiness.dk
+                        id:
+                          type: number
+                          example: 1
+                        name:
+                          type: string
+                          example: Emil
+                    studentLink:
+                      type: string
+                      example: "http://facebook.dk"
+                    timestamp:
+                      type: string
+                      example: "2021-05-05 11:56:14.0"
+                    topic:
+                      type: string
+                      example: Fejl i JPA
+                example:
+                  - answer:
+                      answer: Rigtigt godt svar
+                      id: 1
+                      teacher:
+                        email: underviser@cphbusiness.dk
+                        id: 1
+                        password: kodeord123
+                        teacherName: Emil tutor
+                        zoom_url: "https://mitnyezoomlink.dk"
+                      teacherLink: "https://codergram.me"
+                    description: JPA kan til tider være træls
+                    id: 1
+                    password: "567898"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 11:56:14.0"
+                    topic: Fejl i JPA
+                  - answer:
+                      answer: Rigtigt godt svar
+                      id: 2
+                      teacher:
+                        email: underviser@cphbusiness.dk
+                        id: 1
+                        password: kodeord123
+                        teacherName: Emil tutor
+                        zoom_url: "https://mitnyezoomlink.dk"
+                      teacherLink: "https://codergram.me"
+                    description: JPA kan til tider være træls
+                    id: 2
+                    password: "567898"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 12:52:07.0"
+                    topic: Fejl i JPA
+                  - description: JPA kan til tider være træls
+                    id: 3
+                    password: "567898"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 12:53:40.0"
+                    topic: Fejl i JPA
+                  - description: JPA kan til tider være træls
+                    id: 4
+                    password: "567898"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 12:58:41.0"
+                    topic: Fejl i JPA
+                  - description: JPA kan til tider være træls
+                    id: 5
+                    password: "567898"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 13:12:12.0"
+                    topic: Fejl i JPA
+                  - description: JPA kan til tider være træls
+                    id: 6
+                    password: "567898"
+                    semesterId: 1
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 13:26:12.0"
+                    topic: Fejl i JPA
+                  - answer:
+                      answer: Rigtigt godt svar
+                      id: 3
+                      teacher:
+                        email: underviser@cphbusiness.dk
+                        id: 1
+                        password: kodeord123
+                        teacherName: Emil tutor
+                        zoom_url: "https://mitnyezoomlink.dk"
+                      teacherLink: "https://codergram.me"
+                    description: JPA kan til tider være træls
+                    id: 7
+                    password: "567898"
+                    semesterId: 2
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 13:48:07.0"
+                    topic: Fejl i JPA
+                  - description: JPA kan til tider være træls
+                    id: 8
+                    password: "567898"
+                    semesterId: 2
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-06 08:59:13.0"
+                    topic: Fejl i JPA
+                  - description: Giver ingen mening
+                    id: 9
+                    password: "12345"
+                    semesterId: 2
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.ru"
+                    timestamp: "2021-05-11 19:45:30.0"
+                    topic: Fejl i postman
+              examples:
+                Get all questions:
+                  value:
+                    - answer:
+                        answer: Rigtigt godt svar
+                        id: 1
+                        teacher:
+                          email: underviser@cphbusiness.dk
+                          id: 1
+                          password: kodeord123
+                          teacherName: Emil tutor
+                          zoom_url: "https://mitnyezoomlink.dk"
+                        teacherLink: "https://codergram.me"
+                      description: JPA kan til tider være træls
+                      id: 1
+                      password: "567898"
+                      semesterId: 1
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 11:56:14.0"
+                      topic: Fejl i JPA
+                    - answer:
+                        answer: Rigtigt godt svar
+                        id: 2
+                        teacher:
+                          email: underviser@cphbusiness.dk
+                          id: 1
+                          password: kodeord123
+                          teacherName: Emil tutor
+                          zoom_url: "https://mitnyezoomlink.dk"
+                        teacherLink: "https://codergram.me"
+                      description: JPA kan til tider være træls
+                      id: 2
+                      password: "567898"
+                      semesterId: 1
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 12:52:07.0"
+                      topic: Fejl i JPA
+                    - description: JPA kan til tider være træls
+                      id: 3
+                      password: "567898"
+                      semesterId: 1
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 12:53:40.0"
+                      topic: Fejl i JPA
+                    - description: JPA kan til tider være træls
+                      id: 4
+                      password: "567898"
+                      semesterId: 1
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 12:58:41.0"
+                      topic: Fejl i JPA
+                    - description: JPA kan til tider være træls
+                      id: 5
+                      password: "567898"
+                      semesterId: 1
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 13:12:12.0"
+                      topic: Fejl i JPA
+                    - description: JPA kan til tider være træls
+                      id: 6
+                      password: "567898"
+                      semesterId: 1
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 13:26:12.0"
+                      topic: Fejl i JPA
+                    - answer:
+                        answer: Rigtigt godt svar
+                        id: 3
+                        teacher:
+                          email: underviser@cphbusiness.dk
+                          id: 1
+                          password: kodeord123
+                          teacherName: Emil tutor
+                          zoom_url: "https://mitnyezoomlink.dk"
+                        teacherLink: "https://codergram.me"
+                      description: JPA kan til tider være træls
+                      id: 7
+                      password: "567898"
+                      semesterId: 2
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 13:48:07.0"
+                      topic: Fejl i JPA
+                    - description: JPA kan til tider være træls
+                      id: 8
+                      password: "567898"
+                      semesterId: 2
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-06 08:59:13.0"
+                      topic: Fejl i JPA
+                    - description: Giver ingen mening
+                      id: 9
+                      password: "12345"
+                      semesterId: 2
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.ru"
+                      timestamp: "2021-05-11 19:45:30.0"
+                      topic: Fejl i postman
+  /TheQueue_Backend/api/questions/semester/2:
+    get:
+      summary: Get questions by semester id
+      description: Get questions by semester id
+      operationId: getQuestionsBySemesterId
+      responses:
+        "200":
+          description: Get questions by semester id
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "1321"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:59:49 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    answer:
+                      type: object
+                      properties:
+                        answer:
+                          type: string
+                          example: Rigtigt godt svar
+                        id:
+                          type: number
+                          example: 3
+                        teacher:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                              example: underviser@cphbusiness.dk
+                            id:
+                              type: number
+                              example: 1
+                            password:
+                              type: string
+                              example: kodeord123
+                            teacherName:
+                              type: string
+                              example: Emil tutor
+                            zoom_url:
+                              type: string
+                              example: "https://mitnyezoomlink.dk"
+                        teacherLink:
+                          type: string
+                          example: "https://codergram.me"
+                    description:
+                      type: string
+                      example: JPA kan til tider være træls
+                    id:
+                      type: number
+                      example: 7
+                    password:
+                      type: string
+                      example: "567898"
+                    semesterId:
+                      type: number
+                      example: 2
+                    student:
+                      type: object
+                      properties:
+                        email:
+                          type: string
+                          example: cph-en93@cphbusiness.dk
+                        id:
+                          type: number
+                          example: 1
+                        name:
+                          type: string
+                          example: Emil
+                    studentLink:
+                      type: string
+                      example: "http://facebook.dk"
+                    timestamp:
+                      type: string
+                      example: "2021-05-05 13:48:07.0"
+                    topic:
+                      type: string
+                      example: Fejl i JPA
+                example:
+                  - answer:
+                      answer: Rigtigt godt svar
+                      id: 3
+                      teacher:
+                        email: underviser@cphbusiness.dk
+                        id: 1
+                        password: kodeord123
+                        teacherName: Emil tutor
+                        zoom_url: "https://mitnyezoomlink.dk"
+                      teacherLink: "https://codergram.me"
+                    description: JPA kan til tider være træls
+                    id: 7
+                    password: "567898"
+                    semesterId: 2
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-05 13:48:07.0"
+                    topic: Fejl i JPA
+                  - description: JPA kan til tider være træls
+                    id: 8
+                    password: "567898"
+                    semesterId: 2
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.dk"
+                    timestamp: "2021-05-06 08:59:13.0"
+                    topic: Fejl i JPA
+                  - description: Giver ingen mening
+                    id: 9
+                    password: "12345"
+                    semesterId: 2
+                    student:
+                      email: cph-en93@cphbusiness.dk
+                      id: 1
+                      name: Emil
+                    studentLink: "http://facebook.ru"
+                    timestamp: "2021-05-11 19:45:30.0"
+                    topic: Fejl i postman
+              examples:
+                Get questions by semester id:
+                  value:
+                    - answer:
+                        answer: Rigtigt godt svar
+                        id: 3
+                        teacher:
+                          email: underviser@cphbusiness.dk
+                          id: 1
+                          password: kodeord123
+                          teacherName: Emil tutor
+                          zoom_url: "https://mitnyezoomlink.dk"
+                        teacherLink: "https://codergram.me"
+                      description: JPA kan til tider være træls
+                      id: 7
+                      password: "567898"
+                      semesterId: 2
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-05 13:48:07.0"
+                      topic: Fejl i JPA
+                    - description: JPA kan til tider være træls
+                      id: 8
+                      password: "567898"
+                      semesterId: 2
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.dk"
+                      timestamp: "2021-05-06 08:59:13.0"
+                      topic: Fejl i JPA
+                    - description: Giver ingen mening
+                      id: 9
+                      password: "12345"
+                      semesterId: 2
+                      student:
+                        email: cph-en93@cphbusiness.dk
+                        id: 1
+                        name: Emil
+                      studentLink: "http://facebook.ru"
+                      timestamp: "2021-05-11 19:45:30.0"
+                      topic: Fejl i postman
+  /TheQueue_Backend/api/schools/all:
+    get:
+      summary: Get all schools with courses and semesters
+      description: Get all schools with courses and semesters
+      operationId: getAllSchoolsWithCoursesAndSemesters
+      responses:
+        "200":
+          description: Get all schools with courses and semesters
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "6646"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:59:41 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    educations:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: number
+                            example: 1
+                          name:
+                            type: string
+                            example: Datamatiker
+                          semesters:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: number
+                                  example: 1
+                                name:
+                                  type: string
+                                  example: 1. Semester
+                            example:
+                              - id: 1
+                                name: 1. Semester
+                              - id: 2
+                                name: 2. Semester
+                              - id: 3
+                                name: 3. Semester
+                              - id: 4
+                                name: 4. Semester
+                              - id: 5
+                                name: 5. Semester
+                      example:
+                        - id: 1
+                          name: Datamatiker
+                          semesters:
+                            - id: 1
+                              name: 1. Semester
+                            - id: 2
+                              name: 2. Semester
+                            - id: 3
+                              name: 3. Semester
+                            - id: 4
+                              name: 4. Semester
+                            - id: 5
+                              name: 5. Semester
+                        - id: 2
+                          name: Finansøkonom
+                          semesters:
+                            - id: 6
+                              name: 1. Semester
+                            - id: 7
+                              name: 2. Semester
+                            - id: 8
+                              name: 3. Semester
+                            - id: 9
+                              name: 4. Semester
+                            - id: 10
+                              name: 5. Semester
+                        - id: 3
+                          name: Multimediedesigner
+                          semesters:
+                            - id: 11
+                              name: 1. Semester
+                            - id: 12
+                              name: 2. Semester
+                            - id: 13
+                              name: 3. Semester
+                            - id: 14
+                              name: 4. Semester
+                            - id: 15
+                              name: 5. Semester
+                    id:
+                      type: number
+                      example: 1
+                    img:
+                      type: string
+                      example: cphbusiness.png
+                    name:
+                      type: string
+                      example: Cphbusiness
+                example:
+                  - educations:
+                      - id: 1
+                        name: Datamatiker
+                        semesters:
+                          - id: 1
+                            name: 1. Semester
+                          - id: 2
+                            name: 2. Semester
+                          - id: 3
+                            name: 3. Semester
+                          - id: 4
+                            name: 4. Semester
+                          - id: 5
+                            name: 5. Semester
+                      - id: 2
+                        name: Finansøkonom
+                        semesters:
+                          - id: 6
+                            name: 1. Semester
+                          - id: 7
+                            name: 2. Semester
+                          - id: 8
+                            name: 3. Semester
+                          - id: 9
+                            name: 4. Semester
+                          - id: 10
+                            name: 5. Semester
+                      - id: 3
+                        name: Multimediedesigner
+                        semesters:
+                          - id: 11
+                            name: 1. Semester
+                          - id: 12
+                            name: 2. Semester
+                          - id: 13
+                            name: 3. Semester
+                          - id: 14
+                            name: 4. Semester
+                          - id: 15
+                            name: 5. Semester
+                    id: 1
+                    img: cphbusiness.png
+                    name: Cphbusiness
+                  - educations:
+                      - id: 4
+                        name: Datamatiker
+                        semesters:
+                          - id: 16
+                            name: 1. Semester
+                          - id: 17
+                            name: 2. Semester
+                          - id: 18
+                            name: 3. Semester
+                          - id: 19
+                            name: 4. Semester
+                          - id: 20
+                            name: 5. Semester
+                      - id: 5
+                        name: Finansøkonom
+                        semesters:
+                          - id: 21
+                            name: 1. Semester
+                          - id: 22
+                            name: 2. Semester
+                          - id: 23
+                            name: 3. Semester
+                          - id: 24
+                            name: 4. Semester
+                          - id: 25
+                            name: 5. Semester
+                      - id: 6
+                        name: Multimediedesigner
+                        semesters:
+                          - id: 26
+                            name: 1. Semester
+                          - id: 27
+                            name: 2. Semester
+                          - id: 28
+                            name: 3. Semester
+                          - id: 29
+                            name: 4. Semester
+                          - id: 30
+                            name: 5. Semester
+                    id: 2
+                    img: kea.jpg
+                    name: KEA
+                  - educations:
+                      - id: 7
+                        name: Elektroteknologi
+                        semesters:
+                          - id: 31
+                            name: 1. Semester
+                          - id: 32
+                            name: 2. Semester
+                          - id: 33
+                            name: 3. Semester
+                          - id: 34
+                            name: 4. Semester
+                          - id: 35
+                            name: 5. Semester
+                      - id: 8
+                        name: IT-Elektronik
+                        semesters:
+                          - id: 36
+                            name: 1. Semester
+                          - id: 37
+                            name: 2. Semester
+                          - id: 38
+                            name: 3. Semester
+                          - id: 39
+                            name: 4. Semester
+                          - id: 40
+                            name: 5. Semester
+                      - id: 9
+                        name: Bygningsdesigner
+                        semesters:
+                          - id: 41
+                            name: 1. Semester
+                          - id: 42
+                            name: 2. Semester
+                          - id: 43
+                            name: 3. Semester
+                          - id: 44
+                            name: 4. Semester
+                          - id: 45
+                            name: 5. Semester
+                    id: 3
+                    img: dtu.png
+                    name: DTU
+                  - educations:
+                      - id: 10
+                        name: HA-Fil
+                        semesters:
+                          - id: 46
+                            name: 1. Semester
+                          - id: 47
+                            name: 2. Semester
+                          - id: 48
+                            name: 3. Semester
+                          - id: 49
+                            name: 4. Semester
+                          - id: 50
+                            name: 5. Semester
+                          - id: 51
+                            name: 6. Semester
+                      - id: 11
+                        name: HA-Kom
+                        semesters:
+                          - id: 52
+                            name: 1. Semester
+                          - id: 53
+                            name: 2. Semester
+                          - id: 54
+                            name: 3. Semester
+                          - id: 55
+                            name: 4. Semester
+                          - id: 56
+                            name: 5. Semester
+                          - id: 57
+                            name: 6. Semester
+                      - id: 12
+                        name: HA-Dat
+                        semesters:
+                          - id: 58
+                            name: 1. Semester
+                          - id: 59
+                            name: 2. Semester
+                          - id: 60
+                            name: 3. Semester
+                          - id: 61
+                            name: 4. Semester
+                          - id: 62
+                            name: 5. Semester
+                          - id: 63
+                            name: 6. Semester
+                    id: 4
+                    img: cbs.png
+                    name: CBS
+              examples:
+                Get all schools with courses and semesters:
+                  value:
+                    - educations:
+                        - id: 1
+                          name: Datamatiker
+                          semesters:
+                            - id: 1
+                              name: 1. Semester
+                            - id: 2
+                              name: 2. Semester
+                            - id: 3
+                              name: 3. Semester
+                            - id: 4
+                              name: 4. Semester
+                            - id: 5
+                              name: 5. Semester
+                        - id: 2
+                          name: Finansøkonom
+                          semesters:
+                            - id: 6
+                              name: 1. Semester
+                            - id: 7
+                              name: 2. Semester
+                            - id: 8
+                              name: 3. Semester
+                            - id: 9
+                              name: 4. Semester
+                            - id: 10
+                              name: 5. Semester
+                        - id: 3
+                          name: Multimediedesigner
+                          semesters:
+                            - id: 11
+                              name: 1. Semester
+                            - id: 12
+                              name: 2. Semester
+                            - id: 13
+                              name: 3. Semester
+                            - id: 14
+                              name: 4. Semester
+                            - id: 15
+                              name: 5. Semester
+                      id: 1
+                      img: cphbusiness.png
+                      name: Cphbusiness
+                    - educations:
+                        - id: 4
+                          name: Datamatiker
+                          semesters:
+                            - id: 16
+                              name: 1. Semester
+                            - id: 17
+                              name: 2. Semester
+                            - id: 18
+                              name: 3. Semester
+                            - id: 19
+                              name: 4. Semester
+                            - id: 20
+                              name: 5. Semester
+                        - id: 5
+                          name: Finansøkonom
+                          semesters:
+                            - id: 21
+                              name: 1. Semester
+                            - id: 22
+                              name: 2. Semester
+                            - id: 23
+                              name: 3. Semester
+                            - id: 24
+                              name: 4. Semester
+                            - id: 25
+                              name: 5. Semester
+                        - id: 6
+                          name: Multimediedesigner
+                          semesters:
+                            - id: 26
+                              name: 1. Semester
+                            - id: 27
+                              name: 2. Semester
+                            - id: 28
+                              name: 3. Semester
+                            - id: 29
+                              name: 4. Semester
+                            - id: 30
+                              name: 5. Semester
+                      id: 2
+                      img: kea.jpg
+                      name: KEA
+                    - educations:
+                        - id: 7
+                          name: Elektroteknologi
+                          semesters:
+                            - id: 31
+                              name: 1. Semester
+                            - id: 32
+                              name: 2. Semester
+                            - id: 33
+                              name: 3. Semester
+                            - id: 34
+                              name: 4. Semester
+                            - id: 35
+                              name: 5. Semester
+                        - id: 8
+                          name: IT-Elektronik
+                          semesters:
+                            - id: 36
+                              name: 1. Semester
+                            - id: 37
+                              name: 2. Semester
+                            - id: 38
+                              name: 3. Semester
+                            - id: 39
+                              name: 4. Semester
+                            - id: 40
+                              name: 5. Semester
+                        - id: 9
+                          name: Bygningsdesigner
+                          semesters:
+                            - id: 41
+                              name: 1. Semester
+                            - id: 42
+                              name: 2. Semester
+                            - id: 43
+                              name: 3. Semester
+                            - id: 44
+                              name: 4. Semester
+                            - id: 45
+                              name: 5. Semester
+                      id: 3
+                      img: dtu.png
+                      name: DTU
+                    - educations:
+                        - id: 10
+                          name: HA-Fil
+                          semesters:
+                            - id: 46
+                              name: 1. Semester
+                            - id: 47
+                              name: 2. Semester
+                            - id: 48
+                              name: 3. Semester
+                            - id: 49
+                              name: 4. Semester
+                            - id: 50
+                              name: 5. Semester
+                            - id: 51
+                              name: 6. Semester
+                        - id: 11
+                          name: HA-Kom
+                          semesters:
+                            - id: 52
+                              name: 1. Semester
+                            - id: 53
+                              name: 2. Semester
+                            - id: 54
+                              name: 3. Semester
+                            - id: 55
+                              name: 4. Semester
+                            - id: 56
+                              name: 5. Semester
+                            - id: 57
+                              name: 6. Semester
+                        - id: 12
+                          name: HA-Dat
+                          semesters:
+                            - id: 58
+                              name: 1. Semester
+                            - id: 59
+                              name: 2. Semester
+                            - id: 60
+                              name: 3. Semester
+                            - id: 61
+                              name: 4. Semester
+                            - id: 62
+                              name: 5. Semester
+                            - id: 63
+                              name: 6. Semester
+                      id: 4
+                      img: cbs.png
+                      name: CBS
+  /TheQueue_Backend/api/schools/count:
+    get:
+      summary: Count schools in DB
+      description: Count schools in DB
+      operationId: countSchoolsInDb
+      responses:
+        "200":
+          description: Count schools in DB
+          headers:
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Content-Length:
+              schema:
+                type: string
+                example: "11"
+            Date:
+              schema:
+                type: string
+                example: "Tue, 11 May 2021 17:59:22 GMT"
+            Keep-Alive:
+              schema:
+                type: string
+                example: timeout=20
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    example: 4
+              examples:
+                Count schools in DB:
+                  value:
+                    count: 4
+tags: []
+
+components:
+  schemas:
+    Question:
+      required:
+      - description
+      - password
+      - semesterId
+      - student
+      - topic
+      type: object
+      properties:
+        description:
+          type: string
+        id:
+          type: integer
+          format: int64
+        password:
+          type: string
+        semesterId:
+          type: integer
+          format: int64
+        student:
+          $ref: '#/components/schemas/Student'
+        studentLink:
+          type: string
+        topic:
+          type: string
+    Student:
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          readOnly: true
+    Teacher:
+      required:
+        - email
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+          readOnly: true
+        password:
+          type: string
+        zoom_url:
+          type: string
+          readOnly: true
