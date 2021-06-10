@@ -4,30 +4,42 @@ language: java
 
 cache:
   directories:
-    - $HOME/.m2
+  - "$HOME/.m2"
+
+env:
+  - CI=false
 
 script:
-  - cd backend && mvn test
+- cd backend && mvn test
 
 after_success:
-  - mvn -Dremote.user=$REMOTE_USER -Dremote.password=$REMOTE_PW tomcat7:deploy -DskipTests
-  - cd ../frontend && npm install && npm run deploy
+- mvn -Dremote.user=$REMOTE_USER -Dremote.password=$REMOTE_PW tomcat7:deploy -DskipTests
 
 services:
-  - mysql
+- mysql
 
 before_script:
-  - sudo apt-get update || true
-  - sudo apt-get install -y debconf-utils
-  - sudo debconf-set-selections <<< 'mysql-apt-config mysql-apt-config/select-server select mysql-8.0'
-  - wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
-  - sudo -E dpkg -i mysql-apt-config_0.8.13-1_all.deb
-  - sudo apt-get update || true
+- sudo apt-get update || true
+- sudo apt-get install -y debconf-utils
+- sudo debconf-set-selections <<< 'mysql-apt-config mysql-apt-config/select-server
+  select mysql-8.0'
+- wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
+- sudo -E dpkg -i mysql-apt-config_0.8.13-1_all.deb
+- sudo apt-get update || true
+- echo "Installing MySQL 8..."
+- sudo -E apt-get -y install mysql-server
+- sudo mysql -u root -e "CREATE User 'dev'@'localhost' IDENTIFIED BY 'ax2'; GRANT
+  ALL PRIVILEGES ON *.* TO 'dev'@'localhost' WITH GRANT OPTION;"
+- sudo mysql -u dev -pax2 -e "CREATE DATABASE startcode_test;"
+- mysql --version
+- echo "before_script Complete"
 
-  - echo "Installing MySQL 8..."
-  - sudo -E apt-get -y install mysql-server
-
-  - sudo mysql -u root -e "CREATE User 'dev'@'localhost' IDENTIFIED BY 'ax2'; GRANT ALL PRIVILEGES ON *.* TO 'dev'@'localhost' WITH GRANT OPTION;"
-  - sudo mysql -u dev -pax2 -e "CREATE DATABASE startcode_test;"
-  - mysql --version
-  - echo "before_script Complete"
+before_install:
+- openssl aes-256-cbc -K $encrypted_dfdcfd5172af_key -iv $encrypted_dfdcfd5172af_iv
+  -in deploy_key.enc -out ./deploy_key -d
+- eval "$(ssh-agent -s)"
+- chmod 600 ./deploy_key
+- echo -e "Host eenielsen.dk\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+- ssh-add ./deploy_key
+# test ssh connection for: https://github.com/dwyl/learn-travis/issues/42
+- ssh -i ./deploy_key root@eenielsen.dk pwd
