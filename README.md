@@ -3,7 +3,7 @@
     <img alt="Build status" src="https://travis-ci.com/eelkjaer/3-Semester-Exam.svg?token=9yP3z9qzYHPxRf7MSmsT&branch=main" />
   </a>
 
-### 📝 [Assignment](https://nolink.dk)
+### 📝 [Assignment](Assignment.pdf)
 
 ### 🏠 [Demo](https://eenielsen.dk)
 
