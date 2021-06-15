@@ -2,6 +2,7 @@ package dtos;
 
 import entities.Boat;
 import entities.Owner;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class BoatDTO {
@@ -50,13 +51,27 @@ public class BoatDTO {
   public BoatDTO(Boat boat) {
     this.id = boat.getId();
     this.harbour = new HarbourDTO(boat.getHarbour());
-    for(Owner o: boat.getOwners()){
-      this.owners.add(new OwnerDTO(o));
-    }
+    this.owners = addOwners(boat.getOwners());
     this.brand = boat.getBrand();
     this.make = boat.getMake();
     this.name = boat.getName();
     this.image = boat.getImage();
+  }
+
+  private Collection<OwnerDTO> addOwners(Collection<Owner> owners) {
+    ArrayList<OwnerDTO> dtos = new ArrayList<>();
+    for(Owner o: owners){
+      dtos.add(convertOwner(o));
+    }
+    return dtos;
+  }
+
+  private OwnerDTO convertOwner(Owner o) {
+    if(o != null){
+      return new OwnerDTO(o);
+    } else {
+      return null;
+    }
   }
 
   public long getId() {

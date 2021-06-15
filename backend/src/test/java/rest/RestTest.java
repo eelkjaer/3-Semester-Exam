@@ -4,6 +4,7 @@ package rest;
 import entities.Boat;
 import entities.Harbour;
 import entities.Owner;
+import org.junit.jupiter.api.DisplayName;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
@@ -18,6 +19,7 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItems;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -139,14 +141,30 @@ class RestTest {
   }
 
   @Test
-  @Disabled
-  void testCount() throws Exception {
+  @DisplayName("As a user I would like to see all owners")
+  //Checks that owners are present and the number of owners are correct in array.
+  void US1() throws Exception {
     given()
         .contentType("application/json")
-        .get("/schools/count").then()
+        .get("/owners").then()
         .assertThat()
         .statusCode(HttpStatus.OK_200.getStatusCode())
-        .body("count", equalTo(2));
+        .body("name", hasItems("Tester 1", "Tester 2", "Tester 3", "Tester 4", "Tester 5", "Tester 6", "Tester 7"))
+        .body("size()", equalTo(7));
+  }
+
+  @Test
+  @DisplayName("As a user I would like to see all boats belonging in a specific harbour")
+  //Checks that 3 boats in harbour 1
+  void US2() throws Exception {
+    given()
+        .pathParam("id", 1)
+        .contentType("application/json")
+        .get("/boats/harbour/{id}")
+        .then()
+        .assertThat()
+        .statusCode(HttpStatus.OK_200.getStatusCode())
+        .body("size()", equalTo(3));
   }
 
   @Test

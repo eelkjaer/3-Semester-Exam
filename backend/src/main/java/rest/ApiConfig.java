@@ -30,6 +30,5 @@ public class ApiConfig extends Application {
     resources.add(security.JWTAuthFilter.class);
     resources.add(AuthResource.class);
     resources.add(security.RolesAllowedFilter.class);
-    resources.add(ExternalResource.class);
   }
 }

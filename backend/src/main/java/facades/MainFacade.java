@@ -2,13 +2,11 @@ package facades;
 
 import dtos.BoatDTO;
 import dtos.OwnerDTO;
-import entities.Harbour;
 import entities.Boat;
+import entities.Harbour;
 import entities.Owner;
-import entities.User;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -58,84 +56,126 @@ public class MainFacade {
 
   //User story 2
   //By ID
-  public Boat getBoatsByHarbour(long id){
+  public List<BoatDTO> getBoatsByHarbour(long id){
     EntityManager em = emf.createEntityManager();
+    List<BoatDTO> dtos = new ArrayList<>();
     try{
       TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.id = :id", Boat.class);
       query.setParameter("id", id);
-      return query.getSingleResult();
+
+      List<Boat> boats = query.getResultList();
+
+      if(boats.size() == 0){
+        throw new NoResultException();
+      }
+
+      for(Boat b: boats){
+        dtos.add(new BoatDTO(b));
+      }
+      return dtos;
     }catch (NoResultException ex) {
-      return null;
+      throw new NotFoundException("No results for harbor with ID: " + id);
     } finally {
       em.close();
     }
   }
+
   //By name
-  public Boat getBoatsByHarbour(String name){
+  public List<BoatDTO> getBoatsByHarbour(String name){
     EntityManager em = emf.createEntityManager();
+    List<BoatDTO> dtos = new ArrayList<>();
     try{
-      TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.name = :name", Boat.class);
+      TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.name LIKE :name", Boat.class);
+      name = "%" + name + "%"; //Adding wildcards
       query.setParameter("name", name);
-      return query.getSingleResult();
+
+      List<Boat> boats = query.getResultList();
+
+      if(boats.size() == 0){
+        throw new NoResultException();
+      }
+
+      for(Boat b: boats){
+        dtos.add(new BoatDTO(b));
+      }
+      return dtos;
     }catch (NoResultException ex) {
-      return null;
+      throw new NotFoundException("No results for harbor with name: " + name.replace("%", ""));
     } finally {
       em.close();
     }
   }
 
-
-  /*public long getNumberOfCourses(){
+  public List<OwnerDTO> getOwnersOfBoat(int id) {
     EntityManager em = emf.createEntityManager();
+    List<OwnerDTO> dtos = new ArrayList<>();
     try{
-      return (long)em.createQuery("SELECT COUNT(c) FROM Course c").getSingleResult();
-    }finally{
-      em.close();
-    }
-  }*/
+      TypedQuery<Owner> query = em.createQuery("SELECT b.owners FROM Boat b WHERE b.id = :id", Owner.class);
+      query.setParameter("id", id);
 
-  /*public OwnerDTO findStudent(OwnerDTO dto) throws NotAuthorizedException {
-    EntityManager em = emf.createEntityManager();
-    Owner owner = new Owner(dto);
-    try {
-      Query query = em.createQuery("SELECT s FROM Owner s WHERE s.email = :email", Owner.class);
-      query.setParameter("email", owner.getEmail());
-      owner = (Owner) query.getSingleResult();
+      List<Owner> owners = query.getResultList();
 
-    } catch (RuntimeException ex) {
-      throw new NotAuthorizedException("Student: " + dto.getEmail() + " is not authorized!");
+      if(owners.size() == 0){
+        throw new NoResultException();
+      }
+
+      for(Owner o: owners){
+        dtos.add(new OwnerDTO(o));
+      }
+      return dtos;
+    }catch (NoResultException ex) {
+      throw new NotFoundException("No results for boat with ID: " + id);
     } finally {
       em.close();
     }
-    return new OwnerDTO(owner);
+  }
+
+  //explicit search.
+  public List<OwnerDTO> getOwnersOfBoat(String name) {
+    EntityManager em = emf.createEntityManager();
+    List<OwnerDTO> dtos = new ArrayList<>();
+    try{
+      TypedQuery<Owner> query = em.createQuery("SELECT b.owners FROM Boat b WHERE b.name = :name", Owner.class);
+      query.setParameter("name", name);
+
+      List<Owner> owners = query.getResultList();
+
+      if(owners.size() == 0){
+        throw new NoResultException();
+      }
+
+      for(Owner o: owners){
+        dtos.add(new OwnerDTO(o));
+      }
+      return dtos;
+    }catch (NoResultException ex) {
+      throw new NotFoundException("No results for boat with name: " + name);
+    } finally {
+      em.close();
+    }
   }
 
 
-  public BoatDTO createQuestion(BoatDTO q){
+  public BoatDTO createBoat(BoatDTO q){
     Boat boat = new Boat(q);
     EntityManager em = emf.createEntityManager();
     try {
       em.getTransaction().begin();
 
-      Owner owner = new Owner(findStudent(q.getStudent()));
-      Harbour harbour = em.find(Harbour.class, q.getSemesterId());
+      List<Owner> owners = focOwners(q.getOwners());
 
-      //Verify that student belongs to given school.
-      if(!harbour.getCourse().getSchool().getDomain().equals(owner.getEmail().split("@")[1])){
-        throw new NotAuthorizedException("Wrong school domain");
-      }
+      Harbour harbour = q.getHarbour().getId() != 0 ? findHarbour(q.getHarbour().getId()) : findHarbour(q.getHarbour().getName());
 
-      boat.setSemester(harbour);
-      boat.setStudent(owner);
-      boat.setTimestamp(Timestamp.from(Instant.now()));
+
+      boat.setOwners(owners);
+      boat.setHarbour(harbour);
       em.persist(boat);
       em.getTransaction().commit();
 
       q = new BoatDTO(boat);
 
-      System.out.println("Question created with ID \"" + q.getId() + "\" by student with id \""+q.getStudent().getId()+"\"");
-      } catch (NotAuthorizedException ex) {
-      System.out.println("\"" + q.getStudent().getEmail() + " \" is not allowed here.");
+      System.out.println("Boat created with ID \"" + q.getId() + "\"");
+    } catch (NotAuthorizedException ex) {
       throw new WebApplicationException(ex.getMessage(), 401);
     } finally {
       em.close();
@@ -143,137 +183,137 @@ public class MainFacade {
     return q;
   }
 
-  public Harbour getSemesterById(long id){
-    Harbour harbour;
+  private Harbour findHarbour(long id){
     EntityManager em = emf.createEntityManager();
+    Harbour harbour = null;
+
     try {
-      em.getTransaction().begin();
-      harbour = em.find(Harbour.class, id);
-    } catch (Exception e){
-      throw new NotFoundException();
+      Query query = em.createQuery("SELECT h FROM Harbour h WHERE h.id = :id", Harbour.class);
+      query.setParameter("id", id);
+      harbour = (Harbour) query.getSingleResult();
+
+
+    } catch (RuntimeException ex) {
+      throw new NotFoundException("Harbour with id " + id + " was not found!");
     } finally {
       em.close();
     }
     return harbour;
   }
 
-
-  public List<BoatDTO> getAllQuestions(){
-    List<BoatDTO> dtos = new ArrayList<>();
+  private Harbour findHarbour(String name){
     EntityManager em = emf.createEntityManager();
-    try{
-      TypedQuery<Boat> query = em.createQuery("SELECT q FROM Boat q", Boat.class);
-      List<Boat> res = query.getResultList();
+    Harbour harbour = null;
 
-      for(Boat q: res){
-        dtos.add(new BoatDTO(q));
-      }
+    try {
+      Query query = em.createQuery("SELECT h FROM Harbour h WHERE h.name LIKE :name", Harbour.class);
+      query.setParameter("name", "%" + name + "%");
+      harbour = (Harbour) query.getSingleResult();
 
-    }catch (NoResultException ex) {
-      return new ArrayList<>();
+
+    } catch (RuntimeException ex) {
+      throw new NotFoundException("Harbour with id " + name + " was not found!");
     } finally {
       em.close();
     }
-    return dtos;
+    return harbour;
   }
 
-  public List<BoatDTO> getAllQuestions(int semesterId){
-    List<BoatDTO> dtos = new ArrayList<>();
+  private Owner focOwner(OwnerDTO dto){
     EntityManager em = emf.createEntityManager();
-    try{
-      TypedQuery<Boat> query = em.createQuery("SELECT q FROM Boat q WHERE q.semester.id = :id", Boat.class);
-      query.setParameter("id", semesterId);
-      List<Boat> res = query.getResultList();
+    Owner owner = null;
 
-      for(Boat q: res){
-        if(q.getAnswer() != null){
-          System.out.println("Got answer: " + q.getAnswer().getId());
-        }
-        dtos.add(new BoatDTO(q));
+    try {
+      Query query;
+      if(dto.getId() != 0){
+        query = em.createQuery("SELECT o FROM Owner o WHERE o.id = :id", Owner.class);
+        query.setParameter("id", dto.getId());
+      } else {
+        query = em.createQuery("SELECT o FROM Owner o WHERE o.name LIKE :name", Owner.class);
+        query.setParameter("name", dto.getName());
       }
 
-      for(BoatDTO qd: dtos){
-        if(qd.getAnswer() == null){
-          qd.setAnswer(new AnswerDTO(new TeacherDTO()));
-        }
+
+      owner = (Owner) query.getSingleResult();
+
+      if(owner == null){
+        owner = new Owner(dto);
+        em.getTransaction().begin();
+        em.persist(owner);
+        em.getTransaction().commit();
       }
 
-    }catch (NoResultException ex) {
-      return new ArrayList<>();
-    }finally {
+      return owner;
+
+    } catch (RuntimeException ex) {
+      throw new WebApplicationException(ex);
+    } finally {
       em.close();
     }
-    return dtos;
   }
 
+  private List<Owner> focOwners(Collection<OwnerDTO> dtos) {
+    List<Owner> owners = new ArrayList<>();
+    for(OwnerDTO o: dtos){
+      owners.add(focOwner(o));
+    }
+    return owners;
+  }
 
-
-  public AnswerDTO createAnswer(AnswerDTO a, long questionId){
-    Answer answer = new Answer(a);
-    Boat q;
-
+  public BoatDTO changeHarbour(BoatDTO dto) {
     EntityManager em = emf.createEntityManager();
+    Boat boat;
+
     try {
+      boat = em.find(Boat.class, dto.getId());
+      boat.setHarbour(findHarbour(dto.getHarbour().getId()));
       em.getTransaction().begin();
-
-      User user = new User(findTeacher(a.getTeacher()));
-
-      q = em.find(Boat.class, questionId);
-
-      OwnerDTO ownerDTO = new OwnerDTO(q.getStudent());
-      Owner owner = new Owner(findStudent(ownerDTO));
-      q.setStudent(owner);
-
-      Harbour harbour = em.find(Harbour.class, q.getSemester().getId());
-
-
-      //Verify that student belongs to given school.
-      if(!harbour.getCourse().getSchool().getDomain().equals(user.getEmail().split("@")[1])){
-        throw new NotAuthorizedException("Wrong school domain");
-      }
-
-      answer.setQuestion(q);
-      answer.setTeacher(user);
-      em.persist(answer);
-      q.setAnswer(answer);
-      em.merge(q);
+      em.persist(boat);
       em.getTransaction().commit();
-
-      a = new AnswerDTO(answer);
-
-    } catch (NotAuthorizedException ex) {
-      throw new WebApplicationException(ex.getMessage(), 401);
+    } catch (RuntimeException ex) {
+      throw new NotFoundException(ex);
     } finally {
       em.close();
     }
-    return a;
+    return new BoatDTO(boat);
   }
 
-  public BoatDTO addAnswer(BoatDTO dto) {
-    AnswerDTO answerDTO = createAnswer(dto.getAnswer(), dto.getId());
-    dto = new BoatDTO(getQuestionById(dto.getId()));
-    dto.setAnswer(answerDTO);
-
-    Harbour sem = getSemesterById(dto.getSemesterId());
-    String schoolName = sem.getCourse().getSchool().getName();
-    String courseName = sem.getCourse().getName();
-    String semName = sem.getName();
-
-    String linkName = String.format("Gå til %s, %s, %s", semName, courseName, schoolName);
-    String link = String.format("https://theq.dk/%s/%s/%s", schoolName, courseName, semName).replaceAll(" ", "%20");
-
-    String message = mailer.createMessage(
-        String.format("Hej %s!</br>"
-            + "Du har nu modtaget svar på dit spørgsmål <i>\"%s\"</i>.</br></br>"
-            + "<a href=\"%s\" target=\"_blank\">%s</a>",
-            dto.getStudent().getName(), dto.getTopic(), link, linkName)
-    );
+  public BoatDTO changeBoat(BoatDTO dto) {
+    EntityManager em = emf.createEntityManager();
+    Boat boat;
 
     try {
-      mailer.sendEmail(dto.getStudent().getEmail(), message);
-    } catch (Exception e){
-      System.out.println("Error sending mail: " + e.getMessage());
+      boat = em.find(Boat.class, dto.getId());
+      boat.setHarbour(findHarbour(dto.getHarbour().getId()));
+      boat.setOwners(focOwners(dto.getOwners()));
+      boat.setBrand(dto.getBrand());
+      boat.setMake(dto.getMake());
+      boat.setImage(dto.getImage());
+      boat.setName(dto.getName());
+      em.getTransaction().begin();
+      em.persist(boat);
+      em.getTransaction().commit();
+    } catch (RuntimeException ex) {
+      throw new NotFoundException(ex);
+    } finally {
+      em.close();
     }
-    return dto;
-  }*/
+    return new BoatDTO(boat);
+  }
+
+  public boolean deleteBoat(BoatDTO dto) {
+    EntityManager em = emf.createEntityManager();
+    Boat boat;
+    try {
+      boat = em.find(Boat.class, dto.getId());
+      em.getTransaction().begin();
+      em.remove(boat);
+      em.getTransaction().commit();
+    } catch (RuntimeException ex) {
+      throw new NotFoundException(ex);
+    } finally {
+      em.close();
+    }
+    return true;
+  }
 }

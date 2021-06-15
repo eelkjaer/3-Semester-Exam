@@ -1,6 +1,7 @@
 package facade;
 
 
+import entities.Boat;
 import entities.Owner;
 import facades.MainFacade;
 import javax.persistence.EntityManager;
@@ -11,13 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
-class OwnerTest {
+class BoatTest {
 
   private static EntityManagerFactory emf;
   private static MainFacade facade;
-  private static Owner owner1, owner2;
+  private static Boat boat1, boat2;
 
-  public OwnerTest() {
+  public BoatTest() {
   }
 
   @BeforeAll
@@ -25,8 +26,8 @@ class OwnerTest {
     emf = EMF_Creator.createEntityManagerFactoryForTest();
     facade = MainFacade.getFacade(emf);
 
-    owner1 = new Owner("Tester 1", "Vejnavn 1", 12345678);
-    owner2 = new Owner("Tester 2", "Vejnavn 2", 12345678);
+    boat1 = new Boat("Some brand", "Some make", "HMS 1", "noimg.png");
+    boat2 = new Boat("Some brand2", "Some make2", "HMS 2", "noimg.png");
   }
 
   @BeforeEach
@@ -34,9 +35,9 @@ class OwnerTest {
     EntityManager em = emf.createEntityManager();
     try {
       em.getTransaction().begin();
-      em.createNamedQuery("Owner.deleteAllRows").executeUpdate();
-      em.persist(owner1);
-      em.persist(owner2);
+      em.createNamedQuery("Boat.deleteAllRows").executeUpdate();
+      em.persist(boat1);
+      em.persist(boat2);
 
       em.getTransaction().commit();
     } finally {
@@ -46,8 +47,13 @@ class OwnerTest {
 
 
   @Test
-  void testNumbersOfOwners() {
+  void testNumbersOfBoats() {
     assertEquals(2, facade.getAllOwners().size(), "Expects two rows in the database");
+  }
+
+  @Test
+  void testBoatName(){
+    assertEquals("HMS 1", boat1.getName());
   }
 
 }

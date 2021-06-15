@@ -7,6 +7,7 @@ import facades.MainFacade;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -38,6 +39,7 @@ public class MainResource {
   }
 
 
+  //User story 1
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("owners")
@@ -47,42 +49,88 @@ public class MainResource {
   }
 
 
-  /*@GET
+  //User story 2
+  @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("questions/semester/{id}")
-  public String allQuestionsBySemesterId(@PathParam("id") int semesterId){
-    System.out.println("GET REQUEST: allQuestionsBySemester | Params(Semester ID: " + semesterId + ")");
-    return GSON.toJson(FACADE.getAllQuestions(semesterId));
+  @Path("boats/harbour/{id}")
+  public String allBoatsInHarbour(@PathParam("id") int harbourId){
+    System.out.println("GET REQUEST: allBoatsInHarbour | Params(Harbour ID: " + harbourId + ")");
+    return GSON.toJson(FACADE.getBoatsByHarbour(harbourId));
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("questions")
-  public String allQuestions(){
-    System.out.println("GET REQUEST: allQuestions");
-    return GSON.toJson(FACADE.getAllQuestions());
+  @Path("boats/harbour/name/{name}")
+  public String allBoatsInHarbour(@PathParam("name") String harbourName){
+    System.out.println("GET REQUEST: allBoatsInHarbour | Params(Harbour Name: " + harbourName + ")");
+    return GSON.toJson(FACADE.getBoatsByHarbour(harbourName));
   }
 
 
+  //User story 3
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("owners/boat/{id}")
+  public String allOwnersOfBoat(@PathParam("id") int boatId){
+    System.out.println("GET REQUEST: allOwnersOfBoat | Params(Boat ID: " + boatId + ")");
+    return GSON.toJson(FACADE.getOwnersOfBoat(boatId));
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("owners/boat/name/{name}")
+  public String allOwnersOfBoat(@PathParam("name") String boatName){
+    System.out.println("GET REQUEST: allOwnersOfBoat | Params(Boat Name: " + boatName + ")");
+    return GSON.toJson(FACADE.getOwnersOfBoat(boatName));
+  }
+
+  //User story 4
   @POST
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Path("question")
-  public String createQuestion(BoatDTO dto){
-    System.out.println("POST REQUEST: createQuestion");
+  @Path("boat")
+  //@RolesAllowed("admin")
+  public String createBoat(BoatDTO dto){
+    System.out.println("POST REQUEST: createBoat");
     System.out.println("JSON recieved: " + dto);
-    return GSON.toJson(FACADE.createQuestion(dto));
+    return GSON.toJson(FACADE.createBoat(dto));
   }
 
+  //User story 5
   @PUT
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
-  @Path("question")
-  @RolesAllowed("admin")
-  public String addAnswer(BoatDTO dto){
-    System.out.println("PUT REQUEST: addAnswer");
+  @Path("boat/changeharbour")
+  //@RolesAllowed("admin")
+  public String changeHarbour(BoatDTO dto){
+    System.out.println("PUT REQUEST: changeHarbour");
     System.out.println("JSON recieved: " + dto);
-    return GSON.toJson(FACADE.addAnswer(dto));
+    return GSON.toJson(FACADE.changeHarbour(dto));
 
-  }*/
+  }
+
+  //User story 6
+  @PUT
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("boat")
+  //@RolesAllowed("admin")
+  public String changeBoat(BoatDTO dto){
+    System.out.println("PUT REQUEST: changeBoat");
+    System.out.println("JSON recieved: " + dto);
+    return GSON.toJson(FACADE.changeBoat(dto));
+  }
+
+  //User story 7
+  @DELETE
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("boat")
+  //@RolesAllowed("admin")
+  public String deleteBoat(BoatDTO dto){
+    System.out.println("DELETE REQUEST: deleteBoat");
+    System.out.println("JSON recieved: " + dto);
+    return GSON.toJson(FACADE.deleteBoat(dto));
+  }
+
 }

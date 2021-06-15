@@ -8,6 +8,7 @@ import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -34,7 +35,7 @@ public class Boat implements Serializable {
   private Harbour harbour;
 
 
-  @ManyToMany(cascade = {CascadeType.ALL})
+  @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
   @JoinTable(name="boat_owners",
       joinColumns={@JoinColumn(name="boat_id")},
       inverseJoinColumns={@JoinColumn(name="owner_id")})
@@ -62,7 +63,7 @@ public class Boat implements Serializable {
     for(OwnerDTO o: dto.getOwners()){
       this.owners.add(new Owner(o));
     }
-    this.harbour = new Harbour(dto.getHarbour());
+    this.harbour = dto.getHarbour() != null ? new Harbour(dto.getHarbour()) : null;
     this.brand = dto.getBrand();
     this.make = dto.getMake();
     this.name = dto.getName();
@@ -72,7 +73,7 @@ public class Boat implements Serializable {
   public Boat(Harbour harbour, String brand, String make,
       String name, String image) {
     this.id = -1;
-    this.harbour = harbour;
+    this.harbour = harbour != null ? harbour : new Harbour();
     this.owners = new ArrayList<>();
     this.brand = brand;
     this.make = make;
@@ -83,7 +84,7 @@ public class Boat implements Serializable {
   public Boat(long id, Harbour harbour, Collection<Owner> owners, String brand, String make,
       String name, String image) {
     this.id = id;
-    this.harbour = harbour;
+    this.harbour = harbour != null ? harbour : new Harbour();
     this.owners = owners;
     this.brand = brand;
     this.make = make;
@@ -93,7 +94,7 @@ public class Boat implements Serializable {
 
   public Boat(Harbour harbour, String brand, String make, String name) {
     this.id = -1;
-    this.harbour = harbour;
+    this.harbour = harbour != null ? harbour : new Harbour();
     this.brand = brand;
     this.make = make;
     this.name = name;
@@ -106,6 +107,7 @@ public class Boat implements Serializable {
     this.name = name;
     this.image = image;
     this.owners = new ArrayList<>();
+    this.harbour = new Harbour();
   }
 
   public long getId() {
@@ -121,7 +123,11 @@ public class Boat implements Serializable {
   }
 
   public void setHarbour(Harbour harbour) {
-    this.harbour = harbour;
+    if(harbour != null) {
+      this.harbour = harbour;
+    } else {
+      this.harbour = null;
+    }
   }
 
   public Collection<Owner> getOwners() {

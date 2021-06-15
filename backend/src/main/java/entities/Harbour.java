@@ -77,9 +77,6 @@ public class Harbour implements Serializable{
     this.address = dto.getAddress();
     this.capacity = dto.getCapacity();
     this.boats = new ArrayList<>();
-    for(BoatDTO o: dto.getBoats()){
-      this.boats.add(new Boat(o));
-    }
   }
 
   public long getId() {
@@ -114,18 +111,6 @@ public class Harbour implements Serializable{
     this.capacity = capacity;
   }
 
-  public Collection<Boat> getBoats() {
-    return boats;
-  }
-
-  public void setBoats(Collection<Boat> boats) {
-    this.boats = boats;
-  }
-
-  public void addBoat(Boat boat){
-    this.boats.add(boat);
-  }
-
   @Override
   public String toString() {
     return "Harbour{" +
@@ -133,7 +118,6 @@ public class Harbour implements Serializable{
         ", name='" + name + '\'' +
         ", address='" + address + '\'' +
         ", capacity=" + capacity +
-        ", boats=" + boats +
         '}';
   }
 }

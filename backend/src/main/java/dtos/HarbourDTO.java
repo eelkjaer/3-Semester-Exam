@@ -11,7 +11,6 @@ public class HarbourDTO {
   private String name;
   private String address;
   private int capacity;
-  private Collection<BoatDTO> boats;
 
   public HarbourDTO() {
   }
@@ -21,10 +20,6 @@ public class HarbourDTO {
     this.name = entity.getName();
     this.address = entity.getAddress();
     this.capacity = entity.getCapacity();
-    this.boats = new ArrayList<>();
-    for(Boat o: entity.getBoats()){
-      this.boats.add(new BoatDTO(o));
-    }
   }
 
   public HarbourDTO(long id, String name, String address, int capacity) {
@@ -32,7 +27,6 @@ public class HarbourDTO {
     this.name = name;
     this.address = address;
     this.capacity = capacity;
-    this.boats = new ArrayList<>();
   }
 
   public HarbourDTO(String name, String address, int capacity) {
@@ -40,7 +34,6 @@ public class HarbourDTO {
     this.name = name;
     this.address = address;
     this.capacity = capacity;
-    this.boats = new ArrayList<>();
   }
 
   public long getId() {
@@ -75,14 +68,6 @@ public class HarbourDTO {
     this.capacity = capacity;
   }
 
-  public Collection<BoatDTO> getBoats() {
-    return boats;
-  }
-
-  public void setBoats(Collection<BoatDTO> boats) {
-    this.boats = boats;
-  }
-
   @Override
   public String toString() {
     return "HarbourDTO{" +
@@ -90,7 +75,6 @@ public class HarbourDTO {
         ", name='" + name + '\'' +
         ", address='" + address + '\'' +
         ", capacity=" + capacity +
-        ", boats=" + boats +
         '}';
   }
 }
