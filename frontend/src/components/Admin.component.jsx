@@ -8,6 +8,7 @@ import {
   Redirect,
   Route,
   useParams,
+  Link
 } from "react-router-dom";
 import picture from "../images/tutor.jpg";
 import "react-responsive-modal/styles.css";
@@ -87,7 +88,7 @@ export default function Admin(props) {
           <h1 className="text-center">Admin page</h1>
         </div>
         <div className="col-md-1">
-        <button>Register new boat</button>
+        <Link to="/admin/create">Create new boat</Link>
         </div>
       </div>
 

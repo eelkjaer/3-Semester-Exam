@@ -1,6 +1,7 @@
 package facades;
 
 import dtos.BoatDTO;
+import dtos.HarbourDTO;
 import dtos.OwnerDTO;
 import entities.Boat;
 import entities.Harbour;
@@ -60,8 +61,14 @@ public class MainFacade {
     EntityManager em = emf.createEntityManager();
     List<BoatDTO> dtos = new ArrayList<>();
     try{
-      TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.id = :id", Boat.class);
-      query.setParameter("id", id);
+      TypedQuery<Boat> query;
+      if(id == -99){
+        query = em.createQuery("SELECT b FROM Boat b", Boat.class);
+      } else {
+         query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.id = :id", Boat.class);
+        query.setParameter("id", id);
+      }
+
 
       List<Boat> boats = query.getResultList();
 
@@ -319,5 +326,24 @@ public class MainFacade {
 
   public boolean deleteBoat(BoatDTO dto) {
     return deleteBoat(dto.getId());
+  }
+
+  public List<HarbourDTO> getAllHarbours() {
+    List<HarbourDTO> dtos = new ArrayList<>();
+    EntityManager em = emf.createEntityManager();
+    try{
+      TypedQuery<Harbour> query = em.createQuery("SELECT h FROM Harbour h", Harbour.class);
+      List<Harbour> res = query.getResultList();
+
+      for(Harbour o: res){
+        dtos.add(new HarbourDTO(o));
+      }
+
+    }catch (NoResultException ex) {
+      return new ArrayList<>();
+    }finally {
+      em.close();
+    }
+    return dtos;
   }
 }

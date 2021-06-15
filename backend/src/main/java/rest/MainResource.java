@@ -38,6 +38,14 @@ public class MainResource {
     return "{\"msg\":\"I'm alive\"}";
   }
 
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("harbours")
+  public String getAllHarbours(){
+    System.out.println("GET REQUEST: all harbours");
+    return GSON.toJson(FACADE.getAllHarbours());
+  }
+
 
   //User story 1
   @GET

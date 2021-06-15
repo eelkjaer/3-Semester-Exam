@@ -53,6 +53,7 @@ public class AuthResource {
       JsonObject responseJson = new JsonObject();
       responseJson.addProperty("username", username);
       responseJson.addProperty("token", token);
+      responseJson.addProperty("role", user.getRolesAsStrings().get(0));
       return Response.ok(new Gson().toJson(responseJson)).build();
 
     } catch (JOSEException | NotAuthorizedException ex) {

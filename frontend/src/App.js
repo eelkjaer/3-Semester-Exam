@@ -12,6 +12,7 @@ import Boat from "./components/Boat.component";
 import Owner from "./components/Owner.component";
 import Admin from "./components/Admin.component";
 import Home from "./components/Home.component";
+import CreateBoat from "./components/CreateBoat.component";
 
 
 import NoMatch from "./components/NoMatch.component";
@@ -19,9 +20,11 @@ import Login from "./components/Login.component";
 import "./App.css";
 
 function App(props) {
-  const defaultList = [];
+  const harbourList = [];
+  const newOwnerList = [];
   const { facade, utils } = props;
-  const [harbourData, setHarbourData] = useState([...defaultList]);
+  const [harbourData, setHarbourData] = useState([...harbourList]);
+  const [ownerList, setOwnerList] = useState([...newOwnerList]);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -31,6 +34,9 @@ function App(props) {
   useEffect(() => {
     facade.getAllHarbours((data) => {
       setHarbourData([...data]);
+    });
+    facade.getAllOwners((data) => {
+      setOwnerList([...data]);
     });
   }, []);
 
@@ -99,9 +105,12 @@ function App(props) {
         </Route>
         ))}
 
-        <Route path="/admin">
-        {isLoggedIn ? <Admin facade={facade} utils={utils} role={localStorage.getItem("role")}/> : <Redirect to="/" />}
-          
+        <Route exact path="/admin">
+        {isLoggedIn ? <Admin facade={facade} utils={utils} role={localStorage.getItem("role")} harbourData={harbourData}/> : <Redirect to="/" />}
+        </Route>
+
+        <Route exact path="/admin/create">
+          <CreateBoat harbourData={harbourData} ownerList={ownerList} facade={facade}/>
         </Route>
 
         
