@@ -1,24 +1,14 @@
 package facades;
 
-import dtos.AnswerDTO;
-import dtos.QuestionDTO;
-import dtos.SchoolDTO;
-import dtos.SemesterDTO;
-import dtos.StudentDTO;
-import dtos.TeacherDTO;
-import entities.Answer;
-import entities.Question;
-import entities.School;
-import entities.Semester;
-import entities.Student;
-import entities.Teacher;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import dtos.BoatDTO;
+import dtos.OwnerDTO;
+import entities.Harbour;
+import entities.Boat;
+import entities.Owner;
+import entities.User;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -28,7 +18,6 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
-import utils.EMF_Creator;
 import utils.JavaXEmailService;
 
 public class MainFacade {
@@ -47,15 +36,16 @@ public class MainFacade {
     return instance;
   }
 
-  public List<SchoolDTO> getAllSchools() {
-    List<SchoolDTO> dtos = new ArrayList<>();
+  //User story 1
+  public List<OwnerDTO> getAllOwners() {
+    List<OwnerDTO> dtos = new ArrayList<>();
     EntityManager em = emf.createEntityManager();
     try{
-      TypedQuery<School> query = em.createQuery("SELECT s FROM School s", School.class);
-      List<School> res = query.getResultList();
+      TypedQuery<Owner> query = em.createQuery("SELECT o FROM Owner o", Owner.class);
+      List<Owner> res = query.getResultList();
 
-      for(School s: res){
-        dtos.add(new SchoolDTO(s));
+      for(Owner o: res){
+        dtos.add(new OwnerDTO(o));
       }
 
     }catch (NoResultException ex) {
@@ -66,76 +56,82 @@ public class MainFacade {
     return dtos;
   }
 
-  public long getNumberOfSchools(){
+  //User story 2
+  //By ID
+  public Boat getBoatsByHarbour(long id){
     EntityManager em = emf.createEntityManager();
     try{
-      return (long)em.createQuery("SELECT COUNT(s) FROM School s").getSingleResult();
-    }finally{
+      TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.id = :id", Boat.class);
+      query.setParameter("id", id);
+      return query.getSingleResult();
+    }catch (NoResultException ex) {
+      return null;
+    } finally {
+      em.close();
+    }
+  }
+  //By name
+  public Boat getBoatsByHarbour(String name){
+    EntityManager em = emf.createEntityManager();
+    try{
+      TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b WHERE b.harbour.name = :name", Boat.class);
+      query.setParameter("name", name);
+      return query.getSingleResult();
+    }catch (NoResultException ex) {
+      return null;
+    } finally {
       em.close();
     }
   }
 
-  public long getNumberOfCourses(){
+
+  /*public long getNumberOfCourses(){
     EntityManager em = emf.createEntityManager();
     try{
       return (long)em.createQuery("SELECT COUNT(c) FROM Course c").getSingleResult();
     }finally{
       em.close();
     }
-  }
+  }*/
 
-  public StudentDTO findStudent(StudentDTO dto) throws NotAuthorizedException {
+  /*public OwnerDTO findStudent(OwnerDTO dto) throws NotAuthorizedException {
     EntityManager em = emf.createEntityManager();
-    Student student = new Student(dto);
+    Owner owner = new Owner(dto);
     try {
-      Query query = em.createQuery("SELECT s FROM Student s WHERE s.email = :email", Student.class);
-      query.setParameter("email", student.getEmail());
-      student = (Student) query.getSingleResult();
+      Query query = em.createQuery("SELECT s FROM Owner s WHERE s.email = :email", Owner.class);
+      query.setParameter("email", owner.getEmail());
+      owner = (Owner) query.getSingleResult();
 
     } catch (RuntimeException ex) {
       throw new NotAuthorizedException("Student: " + dto.getEmail() + " is not authorized!");
     } finally {
       em.close();
     }
-    return new StudentDTO(student);
+    return new OwnerDTO(owner);
   }
 
-  public TeacherDTO findTeacher(TeacherDTO dto) throws NotAuthorizedException {
-    EntityManager em = emf.createEntityManager();
-    Teacher teacher = new Teacher(dto);
-    try {
-      Query query = em.createQuery("SELECT t FROM Teacher t WHERE t.email = :email", Teacher.class);
-      query.setParameter("email", teacher.getEmail());
-      teacher = (Teacher) query.getSingleResult();
-    } catch (RuntimeException ex) {
-      throw new NotAuthorizedException("Teacher: " + dto.getEmail() + " is not authorized!");
-    } finally {
-      em.close();
-    }
-    return new TeacherDTO(teacher);
-  }
 
-  public QuestionDTO createQuestion(QuestionDTO q){
-    Question question = new Question(q);
+  public BoatDTO createQuestion(BoatDTO q){
+    Boat boat = new Boat(q);
     EntityManager em = emf.createEntityManager();
     try {
       em.getTransaction().begin();
 
-      Student student = new Student(findStudent(q.getStudent()));
-      Semester semester = em.find(Semester.class, q.getSemesterId());
+      Owner owner = new Owner(findStudent(q.getStudent()));
+      Harbour harbour = em.find(Harbour.class, q.getSemesterId());
 
       //Verify that student belongs to given school.
-      if(!semester.getCourse().getSchool().getDomain().equals(student.getEmail().split("@")[1])){
+      if(!harbour.getCourse().getSchool().getDomain().equals(owner.getEmail().split("@")[1])){
         throw new NotAuthorizedException("Wrong school domain");
       }
 
-      question.setSemester(semester);
-      question.setStudent(student);
-      question.setTimestamp(Timestamp.from(Instant.now()));
-      em.persist(question);
+      boat.setSemester(harbour);
+      boat.setStudent(owner);
+      boat.setTimestamp(Timestamp.from(Instant.now()));
+      em.persist(boat);
       em.getTransaction().commit();
 
-      q = new QuestionDTO(question);
+      q = new BoatDTO(boat);
 
       System.out.println("Question created with ID \"" + q.getId() + "\" by student with id \""+q.getStudent().getId()+"\"");
       } catch (NotAuthorizedException ex) {
@@ -147,30 +143,30 @@ public class MainFacade {
     return q;
   }
 
-  public Semester getSemesterById(long id){
-    Semester semester;
+  public Harbour getSemesterById(long id){
+    Harbour harbour;
     EntityManager em = emf.createEntityManager();
     try {
       em.getTransaction().begin();
-      semester = em.find(Semester.class, id);
+      harbour = em.find(Harbour.class, id);
     } catch (Exception e){
       throw new NotFoundException();
     } finally {
       em.close();
     }
-    return semester;
+    return harbour;
   }
 
 
-  public List<QuestionDTO> getAllQuestions(){
-    List<QuestionDTO> dtos = new ArrayList<>();
+  public List<BoatDTO> getAllQuestions(){
+    List<BoatDTO> dtos = new ArrayList<>();
     EntityManager em = emf.createEntityManager();
     try{
-      TypedQuery<Question> query = em.createQuery("SELECT q FROM Question q", Question.class);
-      List<Question> res = query.getResultList();
+      TypedQuery<Boat> query = em.createQuery("SELECT q FROM Boat q", Boat.class);
+      List<Boat> res = query.getResultList();
 
-      for(Question q: res){
-        dtos.add(new QuestionDTO(q));
+      for(Boat q: res){
+        dtos.add(new BoatDTO(q));
       }
 
     }catch (NoResultException ex) {
@@ -181,22 +177,22 @@ public class MainFacade {
     return dtos;
   }
 
-  public List<QuestionDTO> getAllQuestions(int semesterId){
-    List<QuestionDTO> dtos = new ArrayList<>();
+  public List<BoatDTO> getAllQuestions(int semesterId){
+    List<BoatDTO> dtos = new ArrayList<>();
     EntityManager em = emf.createEntityManager();
     try{
-      TypedQuery<Question> query = em.createQuery("SELECT q FROM Question q WHERE q.semester.id = :id", Question.class);
+      TypedQuery<Boat> query = em.createQuery("SELECT q FROM Boat q WHERE q.semester.id = :id", Boat.class);
       query.setParameter("id", semesterId);
-      List<Question> res = query.getResultList();
+      List<Boat> res = query.getResultList();
 
-      for(Question q: res){
+      for(Boat q: res){
         if(q.getAnswer() != null){
           System.out.println("Got answer: " + q.getAnswer().getId());
         }
-        dtos.add(new QuestionDTO(q));
+        dtos.add(new BoatDTO(q));
       }
 
-      for(QuestionDTO qd: dtos){
+      for(BoatDTO qd: dtos){
         if(qd.getAnswer() == null){
           qd.setAnswer(new AnswerDTO(new TeacherDTO()));
         }
@@ -210,45 +206,34 @@ public class MainFacade {
     return dtos;
   }
 
-  public Question getQuestionById(long id){
-    EntityManager em = emf.createEntityManager();
-    try{
-      TypedQuery<Question> query = em.createQuery("SELECT q FROM Question q WHERE q.id = :id", Question.class);
-      query.setParameter("id", id);
-      return query.getSingleResult();
-    }catch (NoResultException ex) {
-      return null;
-    } finally {
-      em.close();
-    }
-  }
+
 
   public AnswerDTO createAnswer(AnswerDTO a, long questionId){
     Answer answer = new Answer(a);
-    Question q;
+    Boat q;
 
     EntityManager em = emf.createEntityManager();
     try {
       em.getTransaction().begin();
 
-      Teacher teacher = new Teacher(findTeacher(a.getTeacher()));
+      User user = new User(findTeacher(a.getTeacher()));
 
-      q = em.find(Question.class, questionId);
+      q = em.find(Boat.class, questionId);
 
-      StudentDTO studentDTO = new StudentDTO(q.getStudent());
-      Student student = new Student(findStudent(studentDTO));
-      q.setStudent(student);
+      OwnerDTO ownerDTO = new OwnerDTO(q.getStudent());
+      Owner owner = new Owner(findStudent(ownerDTO));
+      q.setStudent(owner);
 
-      Semester semester = em.find(Semester.class, q.getSemester().getId());
+      Harbour harbour = em.find(Harbour.class, q.getSemester().getId());
 
 
       //Verify that student belongs to given school.
-      if(!semester.getCourse().getSchool().getDomain().equals(teacher.getEmail().split("@")[1])){
+      if(!harbour.getCourse().getSchool().getDomain().equals(user.getEmail().split("@")[1])){
         throw new NotAuthorizedException("Wrong school domain");
       }
 
       answer.setQuestion(q);
-      answer.setTeacher(teacher);
+      answer.setTeacher(user);
       em.persist(answer);
       q.setAnswer(answer);
       em.merge(q);
@@ -264,12 +249,12 @@ public class MainFacade {
     return a;
   }
 
-  public QuestionDTO addAnswer(QuestionDTO dto) {
+  public BoatDTO addAnswer(BoatDTO dto) {
     AnswerDTO answerDTO = createAnswer(dto.getAnswer(), dto.getId());
-    dto = new QuestionDTO(getQuestionById(dto.getId()));
+    dto = new BoatDTO(getQuestionById(dto.getId()));
     dto.setAnswer(answerDTO);
 
-    Semester sem = getSemesterById(dto.getSemesterId());
+    Harbour sem = getSemesterById(dto.getSemesterId());
     String schoolName = sem.getCourse().getSchool().getName();
     String courseName = sem.getCourse().getName();
     String semName = sem.getName();
@@ -290,5 +275,5 @@ public class MainFacade {
       System.out.println("Error sending mail: " + e.getMessage());
     }
     return dto;
-  }
+  }*/
 }

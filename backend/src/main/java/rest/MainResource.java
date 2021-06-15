@@ -2,7 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dtos.QuestionDTO;
+import dtos.BoatDTO;
 import facades.MainFacade;
 import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
@@ -20,7 +20,7 @@ import javax.ws.rs.core.UriInfo;
 import utils.EMF_Creator;
 
 @Path("")
-public class QueueResource {
+public class MainResource {
   private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
   private static final MainFacade FACADE = MainFacade.getFacade(EMF);
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
@@ -37,34 +37,17 @@ public class QueueResource {
     return "{\"msg\":\"I'm alive\"}";
   }
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("schools/count")
-  public String countSchools(){
-    System.out.println("GET REQUEST: countSchools");
-    return "{\"count\":"+FACADE.getNumberOfSchools()+"}";
-  }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("courses/count")
-  public String countCourses(){
-    System.out.println("GET REQUEST: countCourses");
-    return "{\"count\":"+FACADE.getNumberOfCourses()+"}";
+  @Path("owners")
+  public String allOwners(){
+    System.out.println("GET REQUEST: all owners");
+    return GSON.toJson(FACADE.getAllOwners());
   }
 
 
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  @Path("schools/all")
-  public String allSchools(){
-    System.out.println("GET REQUEST: allSchools");
-    return GSON.toJson(FACADE.getAllSchools());
-  }
-
-
-
-  @GET
+  /*@GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("questions/semester/{id}")
   public String allQuestionsBySemesterId(@PathParam("id") int semesterId){
@@ -85,7 +68,7 @@ public class QueueResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("question")
-  public String createQuestion(QuestionDTO dto){
+  public String createQuestion(BoatDTO dto){
     System.out.println("POST REQUEST: createQuestion");
     System.out.println("JSON recieved: " + dto);
     return GSON.toJson(FACADE.createQuestion(dto));
@@ -96,10 +79,10 @@ public class QueueResource {
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("question")
   @RolesAllowed("admin")
-  public String addAnswer(QuestionDTO dto){
+  public String addAnswer(BoatDTO dto){
     System.out.println("PUT REQUEST: addAnswer");
     System.out.println("JSON recieved: " + dto);
     return GSON.toJson(FACADE.addAnswer(dto));
 
-  }
+  }*/
 }

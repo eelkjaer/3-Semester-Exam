@@ -1,9 +1,7 @@
 package facades;
 
-import dtos.SchoolDTO;
-import entities.School;
-import entities.Student;
-import entities.Teacher;
+import entities.Owner;
+import entities.User;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -29,28 +27,28 @@ public class UserFacade {
   }
 
 
-  public Teacher getVerfiedUser(String username, String password) throws NotAuthorizedException {
+  public User getVerfiedUser(String username, String password) throws NotAuthorizedException {
     EntityManager em = emf.createEntityManager();
-    Teacher user;
+    User user;
     try {
-      TypedQuery<Teacher> query = em
-          .createQuery("SELECT t FROM Teacher t WHERE t.email = :email", Teacher.class);
-      query.setParameter("email", username);
+      TypedQuery<User> query = em
+          .createQuery("SELECT t FROM User t WHERE t.userName = :username", User.class);
+      query.setParameter("username", username);
       user = query.getSingleResult();
       if (user == null || !user.verifyPassword(password)) {
-        throw new NotAuthorizedException("Invalid user name or password");
+        throw new NotAuthorizedException("Invalid username or password");
       }
     } catch (NoResultException e){
-      throw new NotAuthorizedException("Invalid user name or password");
+      throw new NotAuthorizedException("Invalid username or password");
     } finally {
       em.close();
     }
     return user;
   }
 
-  public Student registerStudent(String email, String name) throws WebApplicationException{
+  /*public Owner registerStudent(String username, String password) throws WebApplicationException{
     EntityManager em = emf.createEntityManager();
-    Student user = new Student(name, email);
+    Owner user = new Owner(name, email);
 
     List<String> domains = getSchoolDomains();
 
@@ -84,9 +82,9 @@ public class UserFacade {
       }finally {
         em.close();
       }
-  }
+  }*/
 
-  public List<Teacher> getAllUsers() {
+  public List<User> getAllUsers() {
     return new ArrayList<>();
   }
 }

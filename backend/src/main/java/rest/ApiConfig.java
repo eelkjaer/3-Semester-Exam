@@ -23,9 +23,10 @@ public class ApiConfig extends Application {
    */
   private void addRestResourceClasses(Set<Class<?>> resources) {
     resources.add(cors.CorsFilter.class);
+    resources.add(errorhandling.GenericExceptionMapper.class);
     resources.add(ExceptionMapper.class);
     resources.add(org.glassfish.jersey.server.wadl.internal.WadlResource.class);
-    resources.add(QueueResource.class);
+    resources.add(MainResource.class);
     resources.add(security.JWTAuthFilter.class);
     resources.add(AuthResource.class);
     resources.add(security.RolesAllowedFilter.class);

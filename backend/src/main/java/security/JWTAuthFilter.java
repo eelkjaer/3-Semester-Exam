@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
+import errorhandling.AuthenticationException;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.text.ParseException;
@@ -16,7 +17,6 @@ import javax.annotation.Priority;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
@@ -40,14 +40,15 @@ public class JWTAuthFilter implements ContainerRequestFilter {
 
       String token = request.getHeaderString("x-access-token");//
       if (token == null) {
+        request.abortWith(errorhandling.GenericExceptionMapper.makeErrRes("Not authenticated - do login", 403));
         return;
       }
       try {
-        TeacherPrincipal teacher = getUserPrincipalFromTokenIfValid(token);
+        UserPrincipal user = getUserPrincipalFromTokenIfValid(token);
         //What if the client had logged out????
-        request.setSecurityContext(new JWTSecurityContext(teacher, request));
-      } catch (NotAuthorizedException | ParseException | JOSEException ex) {
-        Logger.getLogger(JWTAuthFilter.class.getName()).log(Level.SEVERE, null, ex);
+        request.setSecurityContext(new JWTSecurityContext(user, request));
+      } catch (AuthenticationException | ParseException | JOSEException ex) {
+        request.abortWith(errorhandling.GenericExceptionMapper.makeErrRes("Token not valid (timed out?)", 403));
       }
     }
   }
@@ -67,22 +68,23 @@ public class JWTAuthFilter implements ContainerRequestFilter {
     return false;
   }
 
-  private TeacherPrincipal getUserPrincipalFromTokenIfValid(String token)
-      throws ParseException, JOSEException, NotAuthorizedException {
+  private UserPrincipal getUserPrincipalFromTokenIfValid(String token)
+      throws ParseException, JOSEException, AuthenticationException {
     SignedJWT signedJWT = SignedJWT.parse(token);
     //Is it a valid token (generated with our shared key)
     JWSVerifier verifier = new MACVerifier(SharedSecret.getSharedKey());
 
     if (signedJWT.verify(verifier)) {
       if (new Date().getTime() > signedJWT.getJWTClaimsSet().getExpirationTime().getTime()) {
-        throw new NotAuthorizedException("Your Token is no longer valid");
+        throw new AuthenticationException("Your Token is no longer valid");
       }
       String roles = signedJWT.getJWTClaimsSet().getClaim("roles").toString();
       String username = signedJWT.getJWTClaimsSet().getClaim("username").toString();
 
       String[] rolesArray = roles.split(",");
 
-      return new TeacherPrincipal(username);
+      return new UserPrincipal(username, rolesArray);
+//     return new UserPrincipal(username, roles);
     } else {
       throw new JOSEException("User could not be extracted from token");
     }

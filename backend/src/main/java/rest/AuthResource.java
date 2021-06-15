@@ -10,13 +10,11 @@ import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import entities.Student;
-import entities.Teacher;
+import entities.Owner;
+import entities.User;
 import facades.UserFacade;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.NotAuthorizedException;
@@ -41,33 +39,28 @@ public class AuthResource {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
-  public Response login(String jsonString) throws BadRequestException, NotAuthorizedException {
-    String username;
-    String password;
-    try {
-      JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
-      username = json.get("email").getAsString();
-      password = json.get("password").getAsString();
-    } catch (Exception e) {
-      throw new BadRequestException("Malformed JSON Suplied",e);
-    }
+  public Response login(String jsonString) throws NotAuthorizedException {
+    JsonObject json = new JsonParser().parse(jsonString).getAsJsonObject();
+    String username = json.get("username").getAsString();
+    String password = json.get("password").getAsString();
 
     try {
-      Teacher teacher = USER_FACADE.getVerfiedUser(username, password);
-      String token = createToken(username);
+      User user = USER_FACADE.getVerfiedUser(username, password);
+      String token = createToken(username, user.getRolesAsStrings());
       JsonObject responseJson = new JsonObject();
       responseJson.addProperty("username", username);
       responseJson.addProperty("token", token);
       return Response.ok(new Gson().toJson(responseJson)).build();
 
-    } catch (JOSEException ex) {
-
-      Logger.getLogger(ex.getClass().getName()).log(Level.SEVERE, null, ex);
+    } catch (JOSEException | NotAuthorizedException ex) {
+      if (ex instanceof NotAuthorizedException) {
+        throw (NotAuthorizedException) ex;
+      }
     }
     throw new NotAuthorizedException("Invalid username or password! Please try again");
   }
 
-  @POST
+  /*@POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Produces(MediaType.APPLICATION_JSON)
   @Path("register")
@@ -82,11 +75,11 @@ public class AuthResource {
     }
 
     try{
-    Student student = USER_FACADE.registerStudent(email, name);
-      if (student.getId() != -1) {
+    Owner owner = USER_FACADE.registerStudent(email, name);
+      if (owner.getId() != -1) {
         JsonObject responseJson = new JsonObject();
-        responseJson.addProperty("email", student.getEmail());
-        responseJson.addProperty("name", student.getName());
+        responseJson.addProperty("username", owner());
+        responseJson.addProperty("password", owner.getName());
         return Response.ok(Status.CREATED).build();
     } else {
         return Response.status(Status.fromStatusCode(400)).build();
@@ -94,18 +87,25 @@ public class AuthResource {
     } catch (WebApplicationException e) {
       throw new BadRequestException("User already exists");
     }
-  }
+  }*/
 
 
-  private String createToken(String userName) throws JOSEException {
-    String issuer = "codergram.me";
+  private String createToken(String userName, List<String> roles) throws JOSEException {
+
+    StringBuilder res = new StringBuilder();
+    for (String string : roles) {
+      res.append(string);
+      res.append(",");
+    }
+    String rolesAsString = res.length() > 0 ? res.substring(0, res.length() - 1) : "";
+    String issuer = "eenielsen.dk";
 
     JWSSigner signer = new MACSigner(SharedSecret.getSharedKey());
     Date date = new Date();
     JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
         .subject(userName)
         .claim("username", userName)
-        .claim("roles", "admin")
+        .claim("roles", rolesAsString)
         .claim("issuer", issuer)
         .issueTime(date)
         .expirationTime(new Date(date.getTime() + TOKEN_EXPIRE_TIME))
