@@ -13,25 +13,41 @@ import {
   // useHistory,
 } from "react-router-dom";
 
-export default function Header({ isLoggedIn, loginMsg }) {
+export default function Header({ isLoggedIn, loginMsg, isAdmin }) {
   return (
     <div>
       <ul className="header">
-        <li>
-          <NavLink exact activeClassName="active" to="/">
-            Home
+      <li>
+        <NavLink exact activeClassName="active" to="/">
+          Home
           </NavLink>
-        </li>
-        <li>
-          <NavLink exact activeClassName="active" to="/harbours">
-            Harbours
-          </NavLink>
-        </li>
-        <li>
-          <NavLink exact activeClassName="active" to="/owners">
-            Owners
-          </NavLink>
-        </li>
+          </li>
+      {isLoggedIn ? (
+      <li>
+      <NavLink activeClassName="active" to="/harbours">
+        Harbours
+      </NavLink>
+      </li>
+          ) : ""}
+      {isLoggedIn ? (
+      <li>
+      <NavLink exact activeClassName="active" to="/owners">
+        Owners
+      </NavLink>
+    </li>
+          ) : ""}
+        
+        {isLoggedIn && isAdmin ? (
+      <li>
+      <NavLink exact activeClassName="active" to="/admin">
+        Admin
+      </NavLink>
+    </li>
+          ) : ""}
+        
+        
+        
+        
         <li>
           <NavLink activeClassName="active" to="/login-out">
             {loginMsg}

@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-  // BrowserRouter as Router,
-  // Switch,
-  // Route,
-  // Link,
-  // NavLink,
-  // Redirect,
   useLocation,
-  // Prompt,
-  // useRouteMatch,
-  // useParams,
-  // useHistory,
 } from "react-router-dom";
 
 export default function Login(props) {
@@ -26,7 +16,7 @@ export default function Login(props) {
 
   const init = { username: "", password: "" };
   const [loginCredentials, setLoginCredentials] = useState(init);
-  // const [error, setError] = useState(false);
+  const [error, setError] = useState(false);
 
   const { state } = useLocation();
   //Vi sætter den side vi gerne vil til, selv om vi ikke er logget ind
@@ -37,7 +27,7 @@ export default function Login(props) {
     evt.preventDefault();
     setTimeout(function () {
       clearError();
-    }, 2500);
+    }, 5000);
     login(loginCredentials.username, loginCredentials.password, from);
   };
 
@@ -68,9 +58,9 @@ export default function Login(props) {
             <input className="form-control" placeholder="Skriv kodeord..." type="password" id="password" />{" "}
             <p></p>
             <button className="btn btn-primary" onClick={performLogin}>{loginMsg}</button>
-            {console.log(displayError)}
+            {console.log("error: " + displayError)}
             {displayError.length > 0 ? (
-              <p className="alert alert-danger" style={{ width: "415px" }}>
+              <p className="alert alert-danger" id="errorMsg" style={{ width: "415px" }}>
                 {displayError}
               </p>
             ) : (

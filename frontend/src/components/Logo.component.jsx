@@ -1,5 +1,4 @@
 import React from "react";
-import picture from "../images/theQ2.jpg"
 
 const Logo = () => (
   <div>

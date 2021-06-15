@@ -31,7 +31,7 @@ export default function Semester(props) {
         {harbourData.map((sem) => (
           <div className="col-md-4 theMargin" key={sem.id}>
             <div className="">
-              <Link className="item-box the-box underline" to={`harbour/` + sem.id + `/`} props={sem.id}>
+              <Link className="item-box the-box underline" to={`harbours/` + sem.id + `/`} props={sem.id}>
               <h1 className="text-center udd" style={{color: "black"}}>{sem.name}</h1> 
               </Link>
             </div>

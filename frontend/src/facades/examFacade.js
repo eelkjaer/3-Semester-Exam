@@ -107,13 +107,12 @@ function apiFacade() {
     );
     };
 
-    //US4
-  function deleteBoat(boat, callback) {
+    //US7
+  function deleteBoat(id, callback) {
     utils.fetchAny(
-      SERVER_URL_BACKEND + "/api/boat",
+      SERVER_URL_BACKEND + "/api/boat/" + id,
       callback,
-      "DELETE",
-      boat
+      "DELETE"
     );
   };
     

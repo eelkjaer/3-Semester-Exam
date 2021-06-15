@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
 import {
-  // BrowserRouter as Router,
   Switch,
   Route,
-  // Link,
-  // NavLink,
-  // Redirect,
-  // useLocation,
-  // Prompt,
-  // useRouteMatch,
-  // useParams,
+  Redirect,
   useHistory,
 } from "react-router-dom";
 import Logo from "./components/Logo.component";
@@ -17,13 +10,12 @@ import Header from "./components/Header.component";
 import Harbour from "./components/Harbour.component";
 import Boat from "./components/Boat.component";
 import Owner from "./components/Owner.component";
-
+import Admin from "./components/Admin.component";
 import Home from "./components/Home.component";
 
 
 import NoMatch from "./components/NoMatch.component";
 import Login from "./components/Login.component";
-// import PrivateRoute from "./components/PrivateRoute.component";
 import "./App.css";
 
 function App(props) {
@@ -32,46 +24,37 @@ function App(props) {
   const [harbourData, setHarbourData] = useState([...defaultList]);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [displayError, setDisplayError] = useState("");
   let history = useHistory();
 
   useEffect(() => {
     facade.getAllHarbours((data) => {
-      console.log(data);
       setHarbourData([...data]);
     });
   }, []);
 
   const setLoginStatus = (status, pageToGoTo) => {
-    // console.log(pageToGoTo)
-    //Redurect to home if logut is pressed ==> pageToGoTo === "undefined"
     if (typeof pageToGoTo === "undefined") {
       pageToGoTo = "/";
-      // console.log(pageToGoTo)
     }
     setIsLoggedIn(status);
     history.push(pageToGoTo);
   };
 
   const login = (user, pass, from) => {
-    /*TODO*/
     utils
       .login(user, pass)
       .then((res) => {
         setLoginStatus(true, from);
-        //setIsLoggedIn(true);
+        localStorage.getItem("role") === "admin" ? setIsAdmin(true) : setIsAdmin(false);
         setDisplayError("");
       })
       .catch((error) => {
-        error.fullError.then((errorMsg) => {
-          console.log(errorMsg);
+        console.log("error: " + error)
           setDisplayError(
-            // "Error: Status: " +
-            //   errorMsg.code +
-            //   " -  Message: " +
-            errorMsg.message
+            "Wrong login"
           );
-        });
       });
   };
 
@@ -81,12 +64,11 @@ function App(props) {
 
   return (
     <div className="container">
-      {/* {console.log(schoolData)} */}
-      {/* {console.log(props.bookFacade.getBooks)} */}
       <Logo />
       <Header
         loginMsg={isLoggedIn ? "Logout" : "Login"}
         isLoggedIn={isLoggedIn}
+        isAdmin={isAdmin}
       />
 
       <Switch>
@@ -100,20 +82,15 @@ function App(props) {
         </Route>
 
         <Route exact path="/harbours">
-        <Harbour
-                harbourData={harbourData}
-                facade={facade}
-              />
+        {isLoggedIn ? <Harbour harbourData={harbourData} facade={facade}/> : <Redirect to="/" />}
         </Route>
 
         <Route exact path="/owners">
-        <Owner
-                facade={facade}
-              />
+        {isLoggedIn ? <Owner facade={facade}/> : <Redirect to="/" />}
         </Route>
 
         {harbourData.map((harbour) => (
-        <Route exact path={`/harbour/` + harbour.id} key={harbour.id}>
+        <Route exact path={`/harbours/` + harbour.id} key={harbour.id}>
           <Boat
             facade={facade}
             harbourId={harbour.id}
@@ -121,6 +98,11 @@ function App(props) {
             />
         </Route>
         ))}
+
+        <Route path="/admin">
+        {isLoggedIn ? <Admin facade={facade} utils={utils} role={localStorage.getItem("role")}/> : <Redirect to="/" />}
+          
+        </Route>
 
         
 
