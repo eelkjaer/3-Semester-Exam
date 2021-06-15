@@ -23,12 +23,21 @@ export default function Header({ isLoggedIn, loginMsg }) {
           </NavLink>
         </li>
         <li>
+          <NavLink exact activeClassName="active" to="/harbours">
+            Harbours
+          </NavLink>
+        </li>
+        <li>
+          <NavLink exact activeClassName="active" to="/owners">
+            Owners
+          </NavLink>
+        </li>
+        <li>
           <NavLink activeClassName="active" to="/login-out">
             {loginMsg}
           </NavLink>
         </li>
       </ul>
-
       <hr />
     </div>
   );

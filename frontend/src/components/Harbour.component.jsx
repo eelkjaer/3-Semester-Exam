@@ -16,9 +16,7 @@ import Footer from "./Footer.component";
 import "../style/uddannelsesStyle.css";
 
 export default function Semester(props) {
-  const { uddannelse, schoolName, uddName, facade } = props;
-  const semestrene = uddannelse.educations.find(s => s.name === uddName);
-  const [semestre] = useState([...semestrene.semesters]);
+  const { harbourData, facade } = props;
 
   useEffect(() => {
     
@@ -26,18 +24,14 @@ export default function Semester(props) {
 
   return (
     <div>
-      {console.log(uddannelse.uddannelser)}
-      {console.log(semestrene)}
-      {console.log(semestre)}
-      {console.log(schoolName)}
-      {console.log(uddName)}
+      {console.log(harbourData)}
       {/* {JSON.stringify(semestrene.semestre)} */}
 
       <div className="row">
-        {semestrene.semesters.map((sem) => (
+        {harbourData.map((sem) => (
           <div className="col-md-4 theMargin" key={sem.id}>
             <div className="">
-              <Link className="item-box the-box underline" to={`/` + schoolName + `/` + uddName + `/` + sem.name}>
+              <Link className="item-box the-box underline" to={`harbour/` + sem.id + `/`} props={sem.id}>
               <h1 className="text-center udd" style={{color: "black"}}>{sem.name}</h1> 
               </Link>
             </div>

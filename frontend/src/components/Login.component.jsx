@@ -62,9 +62,9 @@ export default function Login(props) {
       <div className="row">
         <div className="col-sm-2 text-center"></div>
         <div className="col-sm-8 text-center">
-        <h2>Underviser Login</h2>
+        <h2>Login</h2>
           <form onChange={onChange}>
-            <input className="form-control" placeholder="Skriv email..." type="text" id="username" />{" "}
+            <input className="form-control" placeholder="Skriv brugernavn..." type="text" id="username" />{" "}
             <input className="form-control" placeholder="Skriv kodeord..." type="password" id="password" />{" "}
             <p></p>
             <button className="btn btn-primary" onClick={performLogin}>{loginMsg}</button>

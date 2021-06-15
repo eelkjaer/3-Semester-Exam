@@ -6,7 +6,7 @@ function handleHttpErrors(res) {
     //console.log(res);
     if (res.status === 401) {
       document.getElementById("errorMsg").innerHTML =
-        "Email blev ikke varificeret...";
+        "Bruger blev ikke varificeret...";
       document.getElementById("errorMsg").style.display = "block";
       setInterval(function () {
         document.getElementById("errorMsg").innerHTML =
@@ -61,7 +61,7 @@ function apiUtils() {
         if (err.status) {
           err.fullError.then((e) => console.log(e.detail));
         } else {
-          console.log("Network error");
+          console.log("Network error: " + err);
         }
       });
   }
@@ -71,8 +71,7 @@ function apiUtils() {
     //console.log(password);
     /*TODO*/
     const options = makeOptions("POST", true, {
-      // user: user,
-      email: user,
+      username: user,
       password: password,
     });
 
@@ -82,7 +81,8 @@ function apiUtils() {
         // console.log(res);
         // document.getElementById("error").innerHTML = "";
         setToken(res.token);
-        saveEmail(user);
+        setRole(res.role);
+        saveUser(user);
       });
   }
 
@@ -94,12 +94,16 @@ function apiUtils() {
     );
   }
 
+  const setRole = (role) => {
+    localStorage.setItem("role", role);
+  }
+
   const setToken = (token) => {
     localStorage.setItem("jwtToken", token);
   };
 
-  const saveEmail = (email) => {
-    localStorage.setItem("teacherEmail", email);
+  const saveUser = (username) => {
+    localStorage.setItem("username", username);
   };
 
   const getToken = () => {
@@ -113,7 +117,8 @@ function apiUtils() {
 
   const logout = () => {
     localStorage.removeItem("jwtToken");
-    localStorage.removeItem("teacherEmail");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
   };
 
   return {

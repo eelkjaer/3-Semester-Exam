@@ -14,9 +14,9 @@ import {
 } from "react-router-dom";
 import Logo from "./components/Logo.component";
 import Header from "./components/Header.component";
-import Uddannelse from "./components/Uddannelse.component";
-import Semester from "./components/Semester.component";
-import Queue from "./components/Queue.component";
+import Harbour from "./components/Harbour.component";
+import Boat from "./components/Boat.component";
+import Owner from "./components/Owner.component";
 
 import Home from "./components/Home.component";
 
@@ -29,16 +29,16 @@ import "./App.css";
 function App(props) {
   const defaultList = [];
   const { facade, utils } = props;
-  const [schoolData, setSchoolData] = useState([...defaultList]);
+  const [harbourData, setHarbourData] = useState([...defaultList]);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [displayError, setDisplayError] = useState("");
   let history = useHistory();
 
   useEffect(() => {
-    facade.getData((data) => {
+    facade.getAllHarbours((data) => {
       console.log(data);
-      setSchoolData([...data]);
+      setHarbourData([...data]);
     });
   }, []);
 
@@ -95,60 +95,34 @@ function App(props) {
             utils={utils}
             facade={facade}
             isLoggedIn={isLoggedIn}
-            schoolData={schoolData}
+            
           />
         </Route>
 
-        {/* Home Page Option */}
-        {schoolData.map((school) => (
-          <Route exact path={`/` + school.name} key={school.id}>
-            <Uddannelse
-              uddannelse={schoolData.find((s) => s.name === school.name)}
-              schoolName={school.name}
-              facade={facade}
-            />
-          </Route>
-        ))}
-
-        {/* Udd Page Option */}
-        {schoolData.map((school) =>
-          school.educations.map((udd) => (
-            // console.log(`/` + school.name + `/` + udd.name)
-            <Route exact path={`/` + school.name + `/` + udd.name} key={udd.id}>
-              <Semester
-                uddannelse={schoolData.find((s) => s.name === school.name)}
-                schoolName={school.name}
-                uddName={udd.name}
+        <Route exact path="/harbours">
+        <Harbour
+                harbourData={harbourData}
                 facade={facade}
               />
-            </Route>
-          ))
-        )}
+        </Route>
 
-        {/* Udd Page Option */}
-        {schoolData.map((school) =>
-          school.educations.map((udd) =>
-            udd.semesters.map((semester) => (
-              // console.log(`/` + school.name + `/` + udd.name + `/` + semester.name)
-              <Route
-                exact
-                path={`/` + school.name + `/` + udd.name + `/` + semester.name}
-                key={semester.id}
-              >
-                <Queue
-                  schoolName={school.name}
-                  schoolId={school.id}
-                  uddName={udd.name}
-                  uddId={udd.id}
-                  semesterName={semester.name}
-                  semesterId={semester.id}
-                  facade={facade}
-                  isLoggedIn={isLoggedIn}
-                />
-              </Route>
-            ))
-          )
-        )}
+        <Route exact path="/owners">
+        <Owner
+                facade={facade}
+              />
+        </Route>
+
+        {harbourData.map((harbour) => (
+        <Route exact path={`/harbour/` + harbour.id} key={harbour.id}>
+          <Boat
+            facade={facade}
+            harbourId={harbour.id}
+            harbourName={harbour.name}
+            />
+        </Route>
+        ))}
+
+        
 
         <Route path="/login-out">
           <Login

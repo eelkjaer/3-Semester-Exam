@@ -5,7 +5,7 @@ import {
   // Route,
   Link,
   // NavLink,
-  // Redirect,
+  Redirect,
   // useLocation,
   // Prompt,
   // useRouteMatch,
@@ -18,29 +18,23 @@ import "../style/skoleStyle.css";
 export default function Home(props) {
   const { facade, schoolData } = props;
 
-  return (
-    <div>
+  if(!props.isLoggedIn){
+    return (
+      <div>
       {/* {console.log(props.isLoggedIn)} */}
       {console.log(schoolData)}
       <div className="row">
-        {schoolData.map((school) => (
-          <div className="col-md-4 theMargin" key={school.id}>
-            <div className="item-box the-box">
-              <Link className="" to={`/` + school.name}>
-                <img
-                  className="img-fluid the-image imgSchool"
-                  src={school.img}
-                  alt={school.name}
-                />
-              </Link>
-            </div>
-          </div>
-        ))}
+        <p>Please <Link to="/login-out">login</Link> to continue!</p>
       </div>
       <br></br>
       <br></br>
       <br></br>
       <Footer facade={facade} />
     </div>
-  );
+    )
+  } else {
+    return (
+      <Redirect to="/harbours"></Redirect>
+    )
+  }
 }

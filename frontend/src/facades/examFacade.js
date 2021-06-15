@@ -1,77 +1,5 @@
 import utils from "../utils";
 import { SERVER_URL_BACKEND } from "../settingsBackend";
-// import { SERVER_URL } from "../settings";
-// import { data } from "../data/data";
-
-// let questions = [
-//   {
-//     id: 1,
-//     semesterId: 23,
-//     student: {
-//       name: "TestName",
-//       email: "test@test.dk",
-//     },
-//     topic: "Test emne",
-//     description: "Dette er mit test problem...",
-//     studentLink: "https://google.com",
-//     password: "1234",
-//     timestamp: "2021-05-05 12:52:07.0",
-//     teacher: {
-//       teacherName: "Arik",
-//       zoom_url: "https://zoom.com",
-//     },
-//     answer: "Dette er min besvarelse til dig",
-//     teacherLink: "https://codedev.dk",
-//   },
-//   {
-//     id: 2,
-//     semesterId: 23,
-//     student: {
-//       name: "Hans",
-//       email: "test@test.dk",
-//     },
-//     topic: "New Test emne",
-//     description: "Dette er mit test problem...",
-//     studentLink: "https://google.com",
-//     password: "1234",
-//     timestamp: "2021-05-05 12:52:07.0",
-//     teacher: {
-//       teacherName: "",
-//       zoom_url: "",
-//     },
-//     answer: "",
-//     teacherLink: "",
-//   },
-// ];
-
-// const proxyData = {
-//   tested: 13495620,
-//   infected: 198472,
-//   recovered: 187318,
-//   deceased: 2125,
-//   dailyInfected: 377,
-//   dailyDead: 19,
-//   dailyRecovered: 706,
-//   uniqueTests: 4200576,
-//   admissions: 534,
-//   respirator: 73,
-//   intensive: 98,
-//   newAdmissions: 21,
-//   admissionsDiff: -7,
-//   respiratorDiff: -6,
-//   intensiveDiff: -4,
-//   uniqueTestsDiff: 6948,
-//   testsDiff: 126275,
-//   dailyInfectedDiff: -54,
-//   country: "Denmark",
-//   historyData:
-//     "https://api.apify.com/v2/datasets/Ugq8cNqnhUSjfJeHr/items?format=json&clean=1",
-//   sourceUrl:
-//     "https://www.ssi.dk/sygdomme-beredskab-og-forskning/sygdomsovervaagning/c/covid19-overvaagning",
-//   lastUpdatedAtApify: "2021-05-06T18:00:00.000Z",
-//   lastUpdatedAtSource: "2021-01-31T00:00:00.000Z",
-//   readMe: "https://apify.com/tugkan/covid-dk",
-// };
 
 function apiFacade() {
   //OBSERVE fetchAny takes a url and a callback. The callback handles the data from the response body.
@@ -118,48 +46,91 @@ function apiFacade() {
 
   function getData(callback) {
     // Change me to do something with data
-    utils.fetchAny(SERVER_URL_BACKEND + "/api/schools/all", callback);
+    utils.fetchAny(SERVER_URL_BACKEND + "/api", callback);
+  };
+
+  function getAllHarbours(callback) {
+    utils.fetchAny(SERVER_URL_BACKEND + "/api/harbours", callback);
   }
 
-  function addQuestion(question, callback) {
+  //US1
+  function getAllOwners(callback) {
     utils.fetchAny(
-      SERVER_URL_BACKEND + "/api/question",
-      callback,
-      "POST",
-      question
-    );
-  }
-
-  function getQuestions(semesterID, callback) {
-    utils.fetchAny(
-      SERVER_URL_BACKEND + "/api/questions/semester/" + semesterID,
+      SERVER_URL_BACKEND + "/api/owners",
       callback
     );
-  }
+  };
 
-  function getProxy(callback) {
-    utils.fetchAny(SERVER_URL_BACKEND + "/api/covid", callback);
-  }
-
-  function addAnswer(answer, callback) {
+  //US2
+  function getBoatsByHarbourId(id, callback) {
     utils.fetchAny(
-      SERVER_URL_BACKEND + "/api/question",
+      SERVER_URL_BACKEND + "/api/boats/harbour/" + id,
+      callback
+    );
+  };
+
+  //US3
+  function getOwnersByBoatId(id, callback) {
+    utils.fetchAny(
+      SERVER_URL_BACKEND + "/api/harbour/" + id,
+      callback
+    );
+  };
+
+  //US4
+  function createBoat(boat, callback) {
+    utils.fetchAny(
+      SERVER_URL_BACKEND + "/api/boat",
+      callback,
+      "POST",
+      boat
+    );
+  };
+
+    //US5
+  function giveBoatNewHarbour(boat, callback) {
+    utils.fetchAny(
+      SERVER_URL_BACKEND + "/api/boat/changeharbour",
       callback,
       "PUT",
-      answer
+      boat
     );
-  }
+    };
+
+    //US6
+  function updateBoat(boat, callback) {
+    utils.fetchAny(
+      SERVER_URL_BACKEND + "/api/boat",
+      callback,
+      "PUT",
+      boat
+    );
+    };
+
+    //US4
+  function deleteBoat(boat, callback) {
+    utils.fetchAny(
+      SERVER_URL_BACKEND + "/api/boat",
+      callback,
+      "DELETE",
+      boat
+    );
+  };
+    
 
   return {
     getData,
-    addQuestion,
-    getQuestions,
-    // getOldQuestions,
-    // getQuestion,
-    // editQuestion,
-    getProxy,
-    addAnswer,
+    getAllHarbours,
+    getAllOwners,
+    getBoatsByHarbourId,
+    getOwnersByBoatId,
+    createBoat,
+    giveBoatNewHarbour,
+    updateBoat,
+    deleteBoat
   };
 }
+
+
 const facade = apiFacade();
 export default facade;
