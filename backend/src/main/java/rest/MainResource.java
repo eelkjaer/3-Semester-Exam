@@ -68,6 +68,7 @@ public class MainResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("owners")
+  @RolesAllowed({"user", "admin"})
   public String allOwners(){
     System.out.println("GET REQUEST: all owners");
     return GSON.toJson(FACADE.getAllOwners());
@@ -78,6 +79,7 @@ public class MainResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("boats/harbour/{id}")
+  @RolesAllowed({"user", "admin"})
   public String allBoatsInHarbour(@PathParam("id") int harbourId){
     System.out.println("GET REQUEST: allBoatsInHarbour | Params(Harbour ID: " + harbourId + ")");
     return GSON.toJson(FACADE.getBoatsByHarbour(harbourId));
@@ -86,6 +88,7 @@ public class MainResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("boats/harbour/name/{name}")
+  @RolesAllowed({"user", "admin"})
   public String allBoatsInHarbour(@PathParam("name") String harbourName){
     System.out.println("GET REQUEST: allBoatsInHarbour | Params(Harbour Name: " + harbourName + ")");
     return GSON.toJson(FACADE.getBoatsByHarbour(harbourName));
@@ -96,6 +99,7 @@ public class MainResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("owners/boat/{id}")
+  @RolesAllowed({"user", "admin"})
   public String allOwnersOfBoat(@PathParam("id") int boatId){
     System.out.println("GET REQUEST: allOwnersOfBoat | Params(Boat ID: " + boatId + ")");
     return GSON.toJson(FACADE.getOwnersOfBoat(boatId));
@@ -104,6 +108,7 @@ public class MainResource {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("owners/boat/name/{name}")
+  @RolesAllowed({"user", "admin"})
   public String allOwnersOfBoat(@PathParam("name") String boatName){
     System.out.println("GET REQUEST: allOwnersOfBoat | Params(Boat Name: " + boatName + ")");
     return GSON.toJson(FACADE.getOwnersOfBoat(boatName));

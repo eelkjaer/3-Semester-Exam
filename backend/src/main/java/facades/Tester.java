@@ -3,6 +3,8 @@ package facades;
 import entities.Boat;
 import entities.Harbour;
 import entities.Owner;
+import entities.Role;
+import entities.User;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -34,6 +36,22 @@ public class Tester {
     Owner owner6 = new Owner("Tester 6", "Vejnavn 6", 12345678);
     Owner owner7 = new Owner("Tester 7", "Vejnavn 7", 12345678);
 
+    User user1 = new User("admin", "test");
+    User user2 = new User("user", "test");
+    Role role1 = new Role("admin");
+    Role role2 = new Role("user");
+
+    em.persist(role1);
+    em.persist(role2);
+
+    user1.addRole(role1);
+    user2.addRole(role2);
+
+    em.persist(user1);
+    em.persist(user2);
+
+    em.getTransaction().commit();
+    em.getTransaction().begin();
 
     em.persist(harbour1);
     em.persist(harbour2);

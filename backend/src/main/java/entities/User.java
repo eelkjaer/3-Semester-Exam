@@ -14,6 +14,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.mindrot.jbcrypt.BCrypt;
 
 @Entity
 @NamedQuery(name = "User.deleteAllRows", query = "DELETE from User")
@@ -32,6 +33,11 @@ public class User implements Serializable {
   @Size(min = 1, max = 255)
   @Column(name = "user_pass")
   private String userPass;
+
+  @Basic
+  @NotNull
+  @Column(name = "user_pass_salt")
+  private final String userPassSalt = BCrypt.gensalt();
 
   @JoinTable(name = "user_roles", joinColumns = {
       @JoinColumn(name = "user_name", referencedColumnName = "user_name")}, inverseJoinColumns = {
@@ -53,15 +59,14 @@ public class User implements Serializable {
 
   public User() {}
 
-  //TODO Change when password is hashed
   public boolean verifyPassword(String pw){
-    return(pw.equals(userPass));
+    return BCrypt.checkpw(pw, this.userPass);
   }
 
   public User(String userName, String userPass) {
     this.userName = userName;
 
-    this.userPass = userPass;
+    this.userPass = BCrypt.hashpw(userPass, this.userPassSalt);
   }
 
 
@@ -78,7 +83,11 @@ public class User implements Serializable {
   }
 
   public void setUserPass(String userPass) {
-    this.userPass = userPass;
+    this.userPass = BCrypt.hashpw(userPass, this.userPassSalt);
+  }
+
+  public String getUserPassSalt() {
+    return this.userPassSalt;
   }
 
   public List<Role> getRoleList() {
