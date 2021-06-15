@@ -16,6 +16,7 @@ export default function Admin(props) {
 
   const list = [];
   const [boatList, setBoatList] = useState([...list]);
+  const [setValue] = useState();
 
   useEffect(() => {
     facade.getAllBoats((data) => {
@@ -30,12 +31,11 @@ export default function Admin(props) {
     
     event.preventDefault();
     facade.deleteBoat(target[0].value, (data) => {
-      if(data === "true") {
-        facade.getBoatsByHarbourId(-99, (data) => {
-          const boats = data;
-          setBoatList([...boats]);
-        });
-      }
+      facade.getAllBoats((data) => {
+        console.log("owners: " + data);
+        const boats = data;
+        setBoatList([...boats]);
+      });
     });
   };
 

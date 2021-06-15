@@ -37,7 +37,6 @@ export default function EditBoat(props){
     };
 
     facade.updateBoat(objectToSend, (data) => {
-      console.log(JSON.stringify(objectToSend))
       setBoat(data);
       setPosted(true);
     });

@@ -17,11 +17,10 @@ export default function Boat(props) {
 
   useEffect(() => {
     facade.getBoatsByHarbourId(harbourId, (data) => {
-      console.log("boats: " + data);
       const boats = data;
       setBoatList([...boats]);
     });
-  });
+  }, [facade]);
 
 
   return (
