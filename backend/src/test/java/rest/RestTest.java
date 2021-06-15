@@ -1,9 +1,18 @@
 
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dtos.BoatDTO;
+import dtos.HarbourDTO;
+import dtos.OwnerDTO;
 import entities.Boat;
 import entities.Harbour;
 import entities.Owner;
+import entities.Role;
+import entities.User;
+import io.restassured.http.ContentType;
+import java.util.ArrayList;
 import org.junit.jupiter.api.DisplayName;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
@@ -32,6 +41,7 @@ class RestTest {
   private static final int SERVER_PORT = 7777;
   private static final String SERVER_URL = "http://localhost/api";
 
+  private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
   static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
   private static HttpServer httpServer;
   private static EntityManagerFactory emf;
@@ -40,6 +50,9 @@ class RestTest {
   private static Boat boat1, boat2, boat3, boat4;
   private static Harbour harbour1, harbour2;
   private static Owner owner1, owner2, owner3, owner4, owner5, owner6, owner7;
+  private static Role userRole, adminRole;
+  private static User user, admin;
+  private static String securityToken;
 
   static HttpServer startServer() {
     ResourceConfig rc = ResourceConfig.forApplication(new ApiConfig());
@@ -88,13 +101,35 @@ class RestTest {
     owner6 = new Owner("Tester 6", "Vejnavn 6", 12345678);
     owner7 = new Owner("Tester 7", "Vejnavn 7", 12345678);
 
+    userRole = new Role("user");
+    adminRole = new Role("admin");
+
+    user = new User("user", "test");
+    admin = new User("admin", "test");
 
     try {
       em.getTransaction().begin();
-      //Ensure all rows are empty
-      em.createNamedQuery("Harbour.deleteAllRows").executeUpdate();
+
+      //Deletes all data in DB
+      em.createNamedQuery("User.deleteAllRows").executeUpdate();
+      em.createNamedQuery("Role.deleteAllRows").executeUpdate();
       em.createNamedQuery("Boat.deleteAllRows").executeUpdate();
+      em.createNamedQuery("Harbour.deleteAllRows").executeUpdate();
       em.createNamedQuery("Owner.deleteAllRows").executeUpdate();
+
+      //Create test users roles
+      em.persist(userRole);
+      em.persist(adminRole);
+
+      //Create test users
+      user.addRole(userRole);
+      em.persist(user);
+      //Create test admin
+      admin.addRole(adminRole);
+      em.persist(admin);
+
+      em.getTransaction().commit();
+      em.getTransaction().begin();
 
       //Create schools etc.
       em.persist(harbour1);
@@ -140,12 +175,64 @@ class RestTest {
     }
   }
 
+  //Utility method to login and set the returned securityToken
+  private static void login(String role, String password) {
+    String json = String.format("{username: \"%s\", password: \"%s\"}", role, password);
+    securityToken = given()
+        .contentType("application/json")
+        .body(json)
+        .when().post("/auth")
+        .then()
+        .extract().path("token");
+    System.out.println("TOKEN ---> "+securityToken);
+  }
+
+  private void logOut() {
+    securityToken = null;
+  }
+
+  @Test
+  public void testRestForAdmin() {
+    login("admin", "test");
+    given()
+        .contentType("application/json")
+        .accept(ContentType.JSON)
+        .header("x-access-token", securityToken)
+        .when()
+        .get("/auth/admininfo").then()
+        .statusCode(200);
+  }
+
+  @Test
+  public void testRestForUser() {
+    login("user", "test");
+    given()
+        .contentType("application/json")
+        .header("x-access-token", securityToken)
+        .when()
+        .get("/auth/userinfo").then()
+        .statusCode(200);
+  }
+
+  @Test
+  public void testUserNotAuth() {
+    login("user", "test");
+    given()
+        .contentType("application/json")
+        .header("x-access-token", securityToken)
+        .when()
+        .get("/auth/admininfo").then()
+        .statusCode(401);
+  }
+
   @Test
   @DisplayName("As a user I would like to see all owners")
   //Checks that owners are present and the number of owners are correct in array.
   void US1() throws Exception {
+    login("user", "test");
     given()
         .contentType("application/json")
+        .header("x-access-token", securityToken)
         .get("/owners").then()
         .assertThat()
         .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -157,10 +244,12 @@ class RestTest {
   @DisplayName("As a user I would like to see all boats belonging in a specific harbour")
   //Checks that 3 boats in harbour 1
   void US2() throws Exception {
+    login("user", "test");
     given()
-        .pathParam("id", 1)
+        .pathParam("name", "Køge")
         .contentType("application/json")
-        .get("/boats/harbour/{id}")
+        .header("x-access-token", securityToken)
+        .get("/boats/harbour/name/{name}")
         .then()
         .assertThat()
         .statusCode(HttpStatus.OK_200.getStatusCode())
@@ -168,16 +257,130 @@ class RestTest {
   }
 
   @Test
-  @Disabled
-  void testGetByName() throws Exception {
+  @DisplayName("As a user I would like to see all owners of a specific boat")
+  void US3() throws Exception {
+    login("user", "test");
     given()
-        .pathParam("id", "1")
+        .pathParam("name", "HMS 4")
         .contentType("application/json")
-        .get("questions/semester/{id}")
+        .header("x-access-token", securityToken)
+        .get("/owners/boat/name/{name}")
         .then()
         .assertThat()
         .statusCode(HttpStatus.OK_200.getStatusCode())
-        .body("size()", equalTo(2));
+        .body("owners.size()", equalTo(3));
+  }
+
+  @Test
+  @DisplayName("As an admin I would like to create a new boat")
+  void US4() throws Exception {
+    login("admin", "test");
+
+    BoatDTO boatDTO = new BoatDTO();
+    boatDTO.setName("Testing boatty");
+    boatDTO.setBrand("SunCatcher");
+    boatDTO.setMake("Bayliner");
+    boatDTO.setImage("noimage.png");
+    boatDTO.setHarbour(new HarbourDTO(harbour1));
+    ArrayList<OwnerDTO> owners = new ArrayList<>();
+    owners.add(new OwnerDTO(owner1));
+    boatDTO.setOwners(owners);
+
+    String requestBody = GSON.toJson(boatDTO);
+
+    System.out.println(requestBody);
+
+    given()
+        .contentType("application/json")
+        .header("x-access-token", securityToken)
+        .and()
+        .body(requestBody)
+        .when()
+        .post("/boat")
+        .then()
+        .assertThat()
+        .statusCode(HttpStatus.OK_200.getStatusCode());
+  }
+
+  @Test
+  @DisplayName("As an admin I would like to connect a boat it with a harbour")
+  void US5() throws Exception {
+    login("admin", "test");
+
+    BoatDTO boatDTO = new BoatDTO(boat1);
+    boatDTO.setHarbour(new HarbourDTO(harbour2));
+
+    String requestBody = GSON.toJson(boatDTO);
+
+    System.out.println(requestBody);
+
+    given()
+        .contentType("application/json")
+        .header("x-access-token", securityToken)
+        .and()
+        .body(requestBody)
+        .when()
+        .put("/boat/changeharbour")
+        .then()
+        .assertThat()
+        .statusCode(HttpStatus.OK_200.getStatusCode());
+  }
+
+  @Test
+  @DisplayName("As an admin I would like to update all information about a boat, its owner and its harbour")
+  void US6() throws Exception {
+    login("admin", "test");
+
+    BoatDTO boatDTO = new BoatDTO(boat4);
+    boatDTO.setName("Some new name");
+    boatDTO.setMake("Some new make");
+    boatDTO.setBrand("Some new brand");
+    boatDTO.setImage("newimage.jpeg");
+    boatDTO.setHarbour(new HarbourDTO(harbour2));
+
+    ArrayList<OwnerDTO> owners = new ArrayList<>();
+    owners.add(new OwnerDTO(owner1));
+    owners.add(new OwnerDTO(owner4));
+    boatDTO.setOwners(owners);
+
+    String requestBody = GSON.toJson(boatDTO);
+
+    System.out.println(requestBody);
+
+    given()
+        .contentType("application/json")
+        .header("x-access-token", securityToken)
+        .and()
+        .body(requestBody)
+        .when()
+        .put("/boat")
+        .then()
+        .assertThat()
+        .statusCode(HttpStatus.OK_200.getStatusCode());
+  }
+
+  @Test
+  @DisplayName("As an admin I would like to delete a boat")
+  void US7() throws Exception {
+    login("admin", "test");
+
+    BoatDTO boatDTO = new BoatDTO(boat4);
+
+    String requestBody = GSON.toJson(boatDTO);
+
+    System.out.println(requestBody);
+
+    given()
+        .contentType("application/json")
+        .pathParam("id", boatDTO.getId())
+        .header("x-access-token", securityToken)
+        .when()
+        .delete("/boat/{id}")
+        .then()
+        .assertThat()
+        .statusCode(HttpStatus.OK_200.getStatusCode())
+        .and()
+        .body(equalTo("true"));
   }
 }
 

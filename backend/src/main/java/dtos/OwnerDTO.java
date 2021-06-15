@@ -12,6 +12,10 @@ public class OwnerDTO {
   public OwnerDTO() {
   }
 
+  public OwnerDTO(long id) {
+    this.id = id;
+  }
+
   public OwnerDTO(long id, String name, String address, int phone) {
     this.id = id;
     this.name = name;

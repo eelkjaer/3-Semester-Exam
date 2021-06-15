@@ -89,7 +89,7 @@ public class MainResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("boat")
-  //@RolesAllowed("admin")
+  @RolesAllowed("admin")
   public String createBoat(BoatDTO dto){
     System.out.println("POST REQUEST: createBoat");
     System.out.println("JSON recieved: " + dto);
@@ -101,7 +101,7 @@ public class MainResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("boat/changeharbour")
-  //@RolesAllowed("admin")
+  @RolesAllowed("admin")
   public String changeHarbour(BoatDTO dto){
     System.out.println("PUT REQUEST: changeHarbour");
     System.out.println("JSON recieved: " + dto);
@@ -114,7 +114,7 @@ public class MainResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("boat")
-  //@RolesAllowed("admin")
+  @RolesAllowed("admin")
   public String changeBoat(BoatDTO dto){
     System.out.println("PUT REQUEST: changeBoat");
     System.out.println("JSON recieved: " + dto);
@@ -126,11 +126,21 @@ public class MainResource {
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   @Path("boat")
-  //@RolesAllowed("admin")
+  @RolesAllowed("admin")
   public String deleteBoat(BoatDTO dto){
     System.out.println("DELETE REQUEST: deleteBoat");
     System.out.println("JSON recieved: " + dto);
     return GSON.toJson(FACADE.deleteBoat(dto));
+  }
+
+  @DELETE
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Path("boat/{id}")
+  @RolesAllowed("admin")
+  public String deleteBoat(@PathParam("id") int boatId){
+    System.out.println("DELETE REQUEST: deleteBoat | Params(Boat ID: " + boatId + ")");
+    return GSON.toJson(FACADE.deleteBoat(boatId));
   }
 
 }

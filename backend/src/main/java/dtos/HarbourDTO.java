@@ -15,6 +15,10 @@ public class HarbourDTO {
   public HarbourDTO() {
   }
 
+  public HarbourDTO(long id) {
+    this.id = id;
+  }
+
   public HarbourDTO(Harbour entity){
     this.id = entity.getId();
     this.name = entity.getName();

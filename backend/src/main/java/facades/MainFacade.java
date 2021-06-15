@@ -301,11 +301,11 @@ public class MainFacade {
     return new BoatDTO(boat);
   }
 
-  public boolean deleteBoat(BoatDTO dto) {
+  public boolean deleteBoat(long id) {
     EntityManager em = emf.createEntityManager();
     Boat boat;
     try {
-      boat = em.find(Boat.class, dto.getId());
+      boat = em.find(Boat.class, id);
       em.getTransaction().begin();
       em.remove(boat);
       em.getTransaction().commit();
@@ -315,5 +315,9 @@ public class MainFacade {
       em.close();
     }
     return true;
+  }
+
+  public boolean deleteBoat(BoatDTO dto) {
+    return deleteBoat(dto.getId());
   }
 }

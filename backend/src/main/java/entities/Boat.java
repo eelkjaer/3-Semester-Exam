@@ -31,7 +31,7 @@ public class Boat implements Serializable {
   private long id;
 
   @ManyToOne
-  @JoinColumn(name = "harbour_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "harbour_id", referencedColumnName = "id", nullable = true)
   private Harbour harbour;
 
 
