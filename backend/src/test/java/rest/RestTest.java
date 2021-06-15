@@ -288,7 +288,6 @@ class RestTest {
 
     String requestBody = GSON.toJson(boatDTO);
 
-    System.out.println(requestBody);
 
     given()
         .contentType("application/json")
@@ -311,8 +310,6 @@ class RestTest {
     boatDTO.setHarbour(new HarbourDTO(harbour2));
 
     String requestBody = GSON.toJson(boatDTO);
-
-    System.out.println(requestBody);
 
     given()
         .contentType("application/json")
@@ -345,8 +342,6 @@ class RestTest {
 
     String requestBody = GSON.toJson(boatDTO);
 
-    System.out.println(requestBody);
-
     given()
         .contentType("application/json")
         .header("x-access-token", securityToken)
@@ -367,8 +362,6 @@ class RestTest {
     BoatDTO boatDTO = new BoatDTO(boat4);
 
     String requestBody = GSON.toJson(boatDTO);
-
-    System.out.println(requestBody);
 
     given()
         .contentType("application/json")
