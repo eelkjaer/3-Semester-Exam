@@ -114,7 +114,7 @@ function App(props) {
           <CreateBoat harbourData={harbourData} ownerList={ownerList} facade={facade}/>
         </Route>
 
-        <Route exact path="/admin/boat/*">
+        <Route exact path="/admin/boat/:id" component={<EditBoat/>}>
           <EditBoat harbourData={harbourData} ownerList={ownerList} facade={facade}/>
         </Route>
 

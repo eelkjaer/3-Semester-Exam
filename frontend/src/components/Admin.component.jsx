@@ -15,17 +15,15 @@ export default function Admin(props) {
   } = props;
 
   const list = [];
-
   const [boatList, setBoatList] = useState([...list]);
 
-
   useEffect(() => {
-    facade.getBoatsByHarbourId(-99, (data) => {
+    facade.getAllBoats((data) => {
+      console.log("owners: " + data);
       const boats = data;
       setBoatList([...boats]);
     });
-
-  });
+  }, [facade]);
 
   const handleSubmit = (event) => {
     const target = event.target;
@@ -88,9 +86,9 @@ export default function Admin(props) {
                   <td>{boat.owners.map((owner) => owner.name)}</td>
                   <td>
                   <form
-        className="form-horizontal"
-        onSubmit={handleSubmit}
-      >
+                  className="form-horizontal"
+                  onSubmit={handleSubmit}
+                  >
         <input
               className="form-control"
               type="hidden"

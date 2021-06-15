@@ -15,7 +15,7 @@ function apiFacade() {
     utils.fetchAny(SERVER_URL_BACKEND + "/api/boats", callback);
   }
 
-  function getBoatsById(id, callback) {
+  function getBoatById(id, callback) {
     utils.fetchAny(
       SERVER_URL_BACKEND + "/api/boat/" + id,
       callback
@@ -88,7 +88,7 @@ function apiFacade() {
 
   return {
     getData,
-    getBoatsById,
+    getBoatById,
     getAllHarbours,
     getAllOwners,
     getAllBoats,
