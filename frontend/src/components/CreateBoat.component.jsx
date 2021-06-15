@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
   useLocation,
+  Redirect,
 } from "react-router-dom";
 
 export default function CreateBoat(props) {
@@ -29,7 +30,7 @@ export default function CreateBoat(props) {
 
   const [boatData, setBoatData] = useState(boat);
 
-  const [error, setError] = useState(false);
+  const [posted, setPosted] = useState(false);
 
   
 
@@ -53,19 +54,9 @@ export default function CreateBoat(props) {
       image: boatData.image
     };
 
-    console.log("Read to send: ");
-    console.log(objectToSend.id)
-    console.log(boatData.harbour)
-    console.log(objectToSend.harbour.id)
-    console.log(objectToSend.owners[0].id)
-    console.log(objectToSend.brand)
-    console.log(objectToSend.make)
-    console.log(objectToSend.name)
-    console.log(objectToSend.image)
-
     facade.createBoat(objectToSend, (data) => {
-      console.log(data);
       setBoatData({ ...boatData });
+      setPosted(true);
     });
 
   };
@@ -84,6 +75,7 @@ export default function CreateBoat(props) {
   }, []);
 
   return (
+    posted ? <Redirect push to="/admin"/> : 
     <div className="container">
       {/* {console.log(utils)} */}
       <div className="row">
