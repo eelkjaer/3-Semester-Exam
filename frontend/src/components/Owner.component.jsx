@@ -1,29 +1,14 @@
 import React, { useState, useEffect } from "react";
-import CreateQModal from "react-responsive-modal";
-import ShowQModal from "react-responsive-modal";
-import queryString from 'query-string'
 
 import "../style/uddannelsesStyle.css";
-import {
-  Route,
-  useParams
-} from "react-router-dom";
-import picture from "../images/tutor.jpg";
 import "react-responsive-modal/styles.css";
 import "../style/modal.css";
 
 export default function Owner(props) {
   const {
     facade,
-    isLoggedIn,
   } = props;
 
-  const owner = {
-    id: -1,
-    name: "",
-    address: "",
-    phone: 12345678
-  };
 
   const list = [];
 
@@ -35,11 +20,7 @@ export default function Owner(props) {
       const owners = data;
       setOwnerList([...owners]);
     });
-
-    if (isLoggedIn) {
-      //setTeacherEmail(localStorage.getItem("teacherEmail"));
-    }
-  }, []);
+  }, [facade]);
 
 
   return (
@@ -53,8 +34,6 @@ export default function Owner(props) {
       </div>
 
     
-
-      {/* Tabel  */}
       <div className="row">
         <div className="col-md-12">
           <table className="table table-striped">

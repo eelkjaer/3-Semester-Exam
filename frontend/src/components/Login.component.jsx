@@ -16,11 +16,8 @@ export default function Login(props) {
 
   const init = { username: "", password: "" };
   const [loginCredentials, setLoginCredentials] = useState(init);
-  const [error, setError] = useState(false);
 
   const { state } = useLocation();
-  //Vi sætter den side vi gerne vil til, selv om vi ikke er logget ind
-  //Logout sætter from til "undefined"
   const from = state ? state.from : "/";
 
   const performLogin = (evt) => {
@@ -38,7 +35,6 @@ export default function Login(props) {
     });
   };
 
-  // Logger selv ud når vi trykker på logout
   useEffect(() => {
     if (isLoggedIn) {
       utils.logout();
@@ -48,7 +44,6 @@ export default function Login(props) {
 
   return (
     <div className="container">
-      {/* {console.log(utils)} */}
       <div className="row">
         <div className="col-sm-2 text-center"></div>
         <div className="col-sm-8 text-center">

@@ -2,56 +2,25 @@ import utils from "../utils";
 import { SERVER_URL_BACKEND } from "../settingsBackend";
 
 function apiFacade() {
-  //OBSERVE fetchAny takes a url and a callback. The callback handles the data from the response body.
-
-  /**
-   * Backend DATA LOCAL
-   */
-  // function getData() {
-  //   return data;
-  // }
-
-  // function addQuestion(question) {
-  //   question.id = questions.length + 1;
-  //   questions.push(question);
-  // }
-
-  // function getQuestions() {
-  //   return questions;
-  // }
-
-  // function getOldQuestions() {
-  //   return questions;
-  // }
-
-  // function getQuestion(id) {
-  //   return questions.find((q) => q.id === parseInt(id));
-  // }
-
-  // function editQuestion(question) {
-  //   let questionToEdit = questions.find((q) => q.id === question.id);
-  //   questionToEdit.teacher.teacherName = question.teacher.teacherName;
-  //   questionToEdit.teacher.zoom_url = question.teacher.zoom_url;
-  //   questionToEdit.answer = question.answer;
-  //   questionToEdit.teacherLink = question.teacherLink;
-  // }
-
-  // function getProxy() {
-  //   return proxyData;
-  // }
-
-  /**
-   * Backend DATA SERVER
-   */
 
   function getData(callback) {
-    // Change me to do something with data
     utils.fetchAny(SERVER_URL_BACKEND + "/api", callback);
   };
 
   function getAllHarbours(callback) {
     utils.fetchAny(SERVER_URL_BACKEND + "/api/harbours", callback);
   }
+
+  function getAllBoats(callback) {
+    utils.fetchAny(SERVER_URL_BACKEND + "/api/boats", callback);
+  }
+
+  function getBoatsById(id, callback) {
+    utils.fetchAny(
+      SERVER_URL_BACKEND + "/api/boat/" + id,
+      callback
+    );
+  };
 
   //US1
   function getAllOwners(callback) {
@@ -119,8 +88,10 @@ function apiFacade() {
 
   return {
     getData,
+    getBoatsById,
     getAllHarbours,
     getAllOwners,
+    getAllBoats,
     getBoatsByHarbourId,
     getOwnersByBoatId,
     createBoat,

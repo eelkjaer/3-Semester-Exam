@@ -13,6 +13,7 @@ import Owner from "./components/Owner.component";
 import Admin from "./components/Admin.component";
 import Home from "./components/Home.component";
 import CreateBoat from "./components/CreateBoat.component";
+import EditBoat from "./components/EditBoat.component";
 
 
 import NoMatch from "./components/NoMatch.component";
@@ -38,7 +39,7 @@ function App(props) {
     facade.getAllOwners((data) => {
       setOwnerList([...data]);
     });
-  }, []);
+  }, [facade]);
 
   const setLoginStatus = (status, pageToGoTo) => {
     if (typeof pageToGoTo === "undefined") {
@@ -113,7 +114,10 @@ function App(props) {
           <CreateBoat harbourData={harbourData} ownerList={ownerList} facade={facade}/>
         </Route>
 
-        
+        <Route exact path="/admin/boat/*">
+          <EditBoat harbourData={harbourData} ownerList={ownerList} facade={facade}/>
+        </Route>
+
 
         <Route path="/login-out">
           <Login

@@ -32,6 +32,7 @@ public class MainResource {
   @Context
   SecurityContext securityContext;
 
+  //Storyless
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   public String isAlive() {
@@ -44,6 +45,22 @@ public class MainResource {
   public String getAllHarbours(){
     System.out.println("GET REQUEST: all harbours");
     return GSON.toJson(FACADE.getAllHarbours());
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("boats")
+  public String getAllBoats(){
+    System.out.println("GET REQUEST: all boats");
+    return GSON.toJson(FACADE.getAllBoats());
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("boat/{id}")
+  public String getBoatById(@PathParam("id") int boatId){
+    System.out.println("GET REQUEST: getBoatById | Params(Boat ID: " + boatId + ")");
+    return GSON.toJson(FACADE.getBoatById(boatId));
   }
 
 

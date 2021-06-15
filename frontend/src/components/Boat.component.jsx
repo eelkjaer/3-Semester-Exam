@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
-import CreateQModal from "react-responsive-modal";
-import ShowQModal from "react-responsive-modal";
-import queryString from 'query-string'
 
 import "../style/uddannelsesStyle.css";
-import {
-  Route,
-  useParams,
-} from "react-router-dom";
-import picture from "../images/tutor.jpg";
 import "react-responsive-modal/styles.css";
 import "../style/modal.css";
 
@@ -17,47 +9,19 @@ export default function Boat(props) {
     harbourId,
     harbourName,
     facade,
-    isLoggedIn,
   } = props;
-
-  const boat = {
-    id: -1,
-    harbour: {
-      id: -1,
-      name: "",
-      address: "",
-      capacity: -1
-    },
-    owners: [
-      {
-        id: -1,
-        name: "",
-        address: "",
-        phone: 12345678
-      }
-    ],
-    brand: "",
-    make: "",
-    name: "",
-    image: ""
-  };
 
   const list = [];
 
-  const [b, setB] = useState({ ...boat });
   const [boatList, setBoatList] = useState([...list]);
 
   useEffect(() => {
     facade.getBoatsByHarbourId(harbourId, (data) => {
-      let boaty = data.map((boat) => (
-        console.log(boat)
-      ));
-
       console.log("boats: " + data);
       const boats = data;
       setBoatList([...boats]);
     });
-  }, []);
+  });
 
 
   return (
@@ -73,7 +37,6 @@ export default function Boat(props) {
 
     
 
-      {/* Tabel  */}
       <div className="row">
         <div className="col-md-12">
           <table className="table table-striped">

@@ -346,4 +346,38 @@ public class MainFacade {
     }
     return dtos;
   }
+
+  public BoatDTO getBoatById(long boatId) {
+    EntityManager em = emf.createEntityManager();
+    Boat boat;
+    try {
+      em.getTransaction().begin();
+      boat = em.find(Boat.class, boatId);
+      em.getTransaction().commit();
+    } catch (RuntimeException ex) {
+      throw new NotFoundException(ex);
+    } finally {
+      em.close();
+    }
+    return new BoatDTO(boat);
+  }
+
+  public List<BoatDTO> getAllBoats() {
+    List<BoatDTO> dtos = new ArrayList<>();
+    EntityManager em = emf.createEntityManager();
+    try{
+      TypedQuery<Boat> query = em.createQuery("SELECT b FROM Boat b", Boat.class);
+      List<Boat> res = query.getResultList();
+
+      for(Boat b: res){
+        dtos.add(new BoatDTO(b));
+      }
+
+    }catch (NoResultException ex) {
+      return new ArrayList<>();
+    }finally {
+      em.close();
+    }
+    return dtos;
+  }
 }

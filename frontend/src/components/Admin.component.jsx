@@ -1,52 +1,21 @@
 import React, { useState, useEffect } from "react";
-import CreateQModal from "react-responsive-modal";
-import ShowQModal from "react-responsive-modal";
-import queryString from 'query-string'
 
 import "../style/uddannelsesStyle.css";
 import {
   Redirect,
-  Route,
-  useParams,
   Link
 } from "react-router-dom";
-import picture from "../images/tutor.jpg";
 import "react-responsive-modal/styles.css";
 import "../style/modal.css";
-import { Alert } from "bootstrap";
 
 export default function Admin(props) {
   const {
-    utils,
     facade,
     role
   } = props;
 
-  const boat = {
-    id: -1,
-    harbour: {
-      id: -1,
-      name: "",
-      address: "",
-      capacity: -1
-    },
-    owners: [
-      {
-        id: -1,
-        name: "",
-        address: "",
-        phone: 12345678
-      }
-    ],
-    brand: "",
-    make: "",
-    name: "",
-    image: ""
-  };
-
   const list = [];
 
-  const [b, setB] = useState({ ...boat });
   const [boatList, setBoatList] = useState([...list]);
 
 
@@ -56,7 +25,7 @@ export default function Admin(props) {
       setBoatList([...boats]);
     });
 
-  }, [facade]);
+  });
 
   const handleSubmit = (event) => {
     const target = event.target;
@@ -83,16 +52,15 @@ export default function Admin(props) {
   return (
     <div>
       <div className="row">
-        <div className="col-md-1"></div>
-        <div className="col-md-10">
+        <div className="col-md-2">
+        <Link to="/admin/create" className="btn btn-primary">Create new boat</Link>
+        </div>
+        <div className="col-md-7">
           <h1 className="text-center">Admin page</h1>
         </div>
-        <div className="col-md-1">
-        <Link to="/admin/create">Create new boat</Link>
-        </div>
+        <div className="col-md-1"></div>
       </div>
 
-      {/* Tabel  */}
       <div className="row">
         <div className="col-md-12">
           <table className="table table-striped">
@@ -112,9 +80,8 @@ export default function Admin(props) {
                   style={{ cursor: "pointer" }}
                   key={boat.id}
                   id={boat.id}
-                  onClick={console.log("test")}
                 >
-                  <td>{boat.name}</td>
+                  <td><Link to={`admin/boat/` + boat.id}>{boat.name}</Link></td>
                   <td>{boat.brand}</td>
                   <td>{boat.make}</td>
                   <td>{boat.harbour.name}</td>
@@ -123,7 +90,6 @@ export default function Admin(props) {
                   <form
         className="form-horizontal"
         onSubmit={handleSubmit}
-        onChange={handleSubmit}
       >
         <input
               className="form-control"
